@@ -105,8 +105,8 @@ l'activité des agents et la localité des données.
 ## Publications
 
 - *Allocation équitable de tâches pour l'analyse de données massives.*
-Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier, accepté, à paraitre dans les actes des 24èmes Journées Francophones sur les Systèmes Multi-Agents 2016 (JFSMA'2016). Hermès. pp. 55-64. 2016. 
+Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier, dans les actes des 24èmes Journées Francophones sur les Systèmes Multi-Agents 2016 (JFSMA'2016). Hermès. pp. 55-64. 2016. 
 
 - *Fair Multi-Agent Task Allocation for Large Data Sets Analysis.*
-Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier, accepté, dans les actes de 14th International Conference on Practical Applications of Agents and Multi-Agent Systems (PAAMS'2016). LNAI 9662, pp. 24-35. 2016.
+Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier, dans les actes de 14th International Conference on Practical Applications of Agents and Multi-Agent Systems (PAAMS'2016). LNAI 9662, pp. 24-35. 2016.
 
