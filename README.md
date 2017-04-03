@@ -3,9 +3,9 @@
 
 
 
-# mas4data : Multi-Agents Systems for very large Data sets
+# MAS4Data : Multi-Agents Systems for very large Data sets
 
-## Contexte 
+## Context 
 
 ### MapReduce
 
