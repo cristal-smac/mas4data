@@ -1,35 +1,32 @@
-
-    git clone git@github.com:cristal-smac/mas4data.git
-
-
-
-# MAS4Data : Multi-Agents Systems for very large Data sets
+# MAS4Data : Multi-Agents Systems for analyzing very large Data sets 
 
 ## Context 
 
 ### MapReduce
 
-La science des données vise à traiter de grands volumes de données
-pour y extraire de nouvelles connaissances.  Comme le potentiel
-technologique et la demande des sociétés ont augmenté, de nouvelles
-méthodes, de nouveaux modèles, systèmes et algorithmes sont
-développés.  L'analyse de ces données, en raison de leur volume, de
-leur vitesse d'acquisition et de leur hétérogénéïté, demande de
-nouvelles formes de traitements.  À cette intention, Google a créé le
-patron d'architecture de développement MapReduce. Le framework le plus
-populaire pour MapReduce est Hadoop mais de nombreuses autres
-implémentations existent.  MapReduce permet de traiter de grands
-volumes de données et tient son nom des deux phases de traitement
-basées sur deux fonctions : la fonction *map* qui filtre les données et
-la fonction *reduce* qui les agrège.
+Data Science aims at processing large volumes of data to extract
+knowledge or insights. The volume and velocity of the available data to
+analyze requires to parallelize the processing as it can be done with
+the MapReduce design pattern [](). The latter takes its
+name from the functions on which it is based: the *map* function
+which filters the data and the *reduce* function which aggregates
+them. The most popular framework for MapReduce is Hadoop but many
+other implementations exist, like the cluster computing framework
+Spark [](), or the distributed NoSQL database Riak
+built from Amazon Dynamo []().
 
-Les données et les flux d'entrées peuvent faire l'objet de biais, de
-pics d'activités périodiques (quotidiens, hebdomadaires ou mensuels)
-ou de pics d'activités déclenchés par un événement particulier.  Ces
-distorsions peuvent être particulièrement difficiles à gérer. Dans les
-frameworks existants, une affectation efficace des tâches (c.à.d. la
-répartition des clés) demande une connaissance a priori de la
-distribution des données. Ces biais ont fait l'objet d'études
+
+Data flows can have periodic (daily, weekly or seasonal) and
+event-triggered peak data loads. These peaks can be challenging to
+manage. In the existing frameworks, an efficient task distribution
+(i.e. the key partitioning) requires prior knowledge of the data
+distribution. The partitioning is *a priori* fixed and so the workload
+is not necessarily uniformly distributed. In a similar way, the usage
+of an heterogeneous cluster environment can lead to a workload
+unevenly distributed between the reducers. 
+
+These have been studied and
+Ces biais ont fait l'objet d'études
  et propositions de correction
 
 1.  soit avec un prétraitement de la donnée, ce
@@ -43,23 +40,26 @@ traitements dans le temps ;
 expertise forte sur la nature des données (connaissance a priori) afin
 de paramétrer au mieux les outils.
 
-### Systèmes Multi-Agents
+## Multiagent systems
 
-L'équipe SMAC (Systèmes Multi-Agents et Comportements) du laboratoire
-CRIStAL utilise le paradigme des **systèmes multi-agents** (SMA), en
-particulier pour la résolution de problèmes complexes. Dans ce cas, un
-SMA est composé de multiples entités dont le but est de résoudre un
-problème qui ne pourrait pas l'être individuellement. Un SMA est
-caractérisé par le fait que :
+By contrast, multiagent
+systems are inherently adaptive and thus particularly suitable when
+workloads constantly evolve.
 
-1. chaque agent a des informations incomplètes et des capacités
-limitées ;
+The SMAC team (Multiagents systems and behaviours) of the laboratory
+CRIStAL employ the **multiagents systems ** paradigm (MAS), in
+particularen for complex distributed problem solving. For this
+purpose, a MAS is composed of many entities which aim at solving a
+complex problem which cannot be done by a single entity. A MAS is
+characterizd by the the fact that :
 
-2. il n'y a pas de contrôle global du système ;
+1. each agent has incomplete information and limited capabilities;
 
-3. les données sont décentralisées ;
+2. there is no central authority;
 
-4. les calculs sont réalisés de manière asynchrone.
+3. data are decentralized;
+
+4. the computation are asynchronously .
 
 Dans un SMA, l'autonomie des agents permet au système de s'adapter
 dynamiquement aux variations, voire aux perturbations de leur
@@ -69,7 +69,16 @@ s'adapter à des données inconnues, à des flux qui évoluent constamment
 et à un environnement informatique dynamique**.
 
     
-## Projet scientifique
+## Scientific project
+
+Ce projet consiste ainsi à adopter une approche interdisciplinaire,
+mêlant Informatique et Économétrie, pour relever :
+*	les défis liés à la gestion des données notamment le calcul
+     intensif sur des grands volumes de données et le parallélisme
+     dirigé par les données ;  
+*	les défis liés à l’extraction de connaissances notamment la
+     recherche d’information et les requêtes complexes sur les grandes
+     données.  
 
 Dans le cadre du projet **mas4data** nous travaillons sur la
 conception d'un système multi-agents implémentant MapReduce où
@@ -102,11 +111,43 @@ durant l'exécution d'un enchaînement de jobs (MapReduce Chaining), et
 l'exécution concurrente de plusieurs jobs, en tenant compte de
 l'activité des agents et la localité des données.
 
+## References
+
+Dean, J. and Ghemawat, S. (2008), Mapreduce: simplified data
+processing on large clusters, Commun. ACM 51(1), 107–113.
+
+Zaharia, M., Xin, R. S., Wendell, P., Das, T., Armbrust, M., Dave, A.,
+Meng, X., Rosen, J., Venkataraman, S., Franklin, M. J., Ghodsi, A.,
+Gonzalez, J., Shenker, S. and Stoica, I. (2016), Apache spark: a
+unified engine for big data processing, Commun. ACM 59(11), 56– 65.
+
+DeCandia, G., Hastorun, D., Jampani, M., Kakulapati, G., Lakshman, A.,
+Pilchin, A., Sivasubramanian, S., Vosshall, P. and Vogels,
+W. (2007), Dynamo: Amazon’s highly available key-value store, in
+Proc. of the 21st ACM SIGOPS Symposium on Operating Systems
+Principles (SOSP ’07), pp. 205–220.
+
+## People
+
+* Quentin BAERT, PhD candidtate
+
+* Anne-Cécile CARON,  Associate Professor
+
+* Maxime MORGE, Associate Professor
+
+* Jean-Christophe ROUTIER, Professor
+
+
 ## Publications
 
 - *Allocation équitable de tâches pour l'analyse de données massives.*
-Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier, dans les actes des 24èmes Journées Francophones sur les Systèmes Multi-Agents 2016 (JFSMA'2016). Hermès. pp. 55-64. 2016. 
+Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe
+Routier, dans les actes des 24èmes Journées Francophones sur les
+Systèmes Multi-Agents 2016 (JFSMA'2016). Hermès. pp. 55-64. 2016.
 
 - *Fair Multi-Agent Task Allocation for Large Data Sets Analysis.*
-Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier, dans les actes de 14th International Conference on Practical Applications of Agents and Multi-Agent Systems (PAAMS'2016). LNAI 9662, pp. 24-35. 2016.
+Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe
+Routier, dans les actes de 14th International Conference on Practical
+Applications of Agents and Multi-Agent Systems (PAAMS'2016). LNAI
+9662, pp. 24-35. 2016.
 
