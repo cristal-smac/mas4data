@@ -24,15 +24,15 @@ is not necessarily uniformly distributed. In a similar way, the usage
 of an heterogeneous cluster environment can lead to a workload
 unevenly distributed between the reducers. 
 
-These skews have been studied and corrected: 
+These skews have been studied and corrected with: 
 
-1. either with a pre-processing of the data which raises the problem
+1. a pre-processing of the data which raises the problem
    of building a representative sample;
 
-2. either with a history of the information on the previous runs which
+2. a history of the information on the previous runs which
 is not adapted with a variation of the data and treatments over time;
 
-3. either with a system requiring an expertise on the data (a priori
+3. a system requiring an expertise on the data (a priori
 knowledge) in order to set up the tools.
 
 ## Multiagent systems
@@ -42,8 +42,8 @@ systems are inherently adaptive and thus particularly suitable when
 workloads constantly evolve.
 
 The SMAC team (Multiagent systems and behaviours) of the laboratory
-[CRIStAL](http://cristal.univ-lille.fr) use the **multiagent systems
-** paradigm (MAS), in particular for complex distributed problem
+[CRIStAL](http://cristal.univ-lille.fr) use the **multiagent systems**
+paradigm (MAS), in particular for complex distributed problem
 solving. For this purpose, a MAS is composed of many entities which
 aim at solving a complex problem which cannot be done by a single
 entity. A MAS is characterized by the the fact that:
