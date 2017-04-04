@@ -1,4 +1,4 @@
-# MAS4Data : Multi-Agents Systems for analyzing very large Data sets 
+# MAS4Data : Multiagent systems for analyzing very large Data sets 
 
 ## Context 
 
@@ -25,20 +25,16 @@ is not necessarily uniformly distributed. In a similar way, the usage
 of an heterogeneous cluster environment can lead to a workload
 unevenly distributed between the reducers. 
 
-These have been studied and
-Ces biais ont fait l'objet d'études
- et propositions de correction
+These skews have been studied and corrected: 
 
-1.  soit avec un prétraitement de la donnée, ce
-qui pose le problème de construction d'un échantillon représentatif ;
+1. either with a pre-processing of the data which raises the problem
+   of building a representative sample;
 
-2. soit avec une historisation des informations sur les précédentes
-exécutions, ce qui n'est pas adapté à une variation des données et des
-traitements dans le temps ;
+2. either with a history of the information on the previous runs which
+is not adapted with a variation of the data and treatments over time;
 
-3. soit avec un système nécessitant une
-expertise forte sur la nature des données (connaissance a priori) afin
-de paramétrer au mieux les outils.
+3. either with a system requiring an expertise on the data (a priori
+knowledge) in order to set up the tools.
 
 ## Multiagent systems
 
@@ -46,12 +42,12 @@ By contrast, multiagent
 systems are inherently adaptive and thus particularly suitable when
 workloads constantly evolve.
 
-The SMAC team (Multiagents systems and behaviours) of the laboratory
-CRIStAL employ the **multiagents systems ** paradigm (MAS), in
-particularen for complex distributed problem solving. For this
-purpose, a MAS is composed of many entities which aim at solving a
-complex problem which cannot be done by a single entity. A MAS is
-characterizd by the the fact that :
+The SMAC team (Multiagent systems and behaviours) of the laboratory
+(CRIStAL)[http://cristal.univ-lille.fr/] use the **multiagent systems
+** paradigm (MAS), in particular for complex distributed problem
+solving. For this purpose, a MAS is composed of many entities which
+aim at solving a complex problem which cannot be done by a single
+entity. A MAS is characterized by the the fact that:
 
 1. each agent has incomplete information and limited capabilities;
 
@@ -59,57 +55,32 @@ characterizd by the the fact that :
 
 3. data are decentralized;
 
-4. the computation are asynchronously .
+4. the computation are asynchronously performed.
 
-Dans un SMA, l'autonomie des agents permet au système de s'adapter
-dynamiquement aux variations, voire aux perturbations de leur
-environnement.  Pour cette raison, nous défendons la thèse selon
-laquelle **les SMA sont particulièrement appropriés pour
-s'adapter à des données inconnues, à des flux qui évoluent constamment
-et à un environnement informatique dynamique**.
-
+In an SMA, the autonomy of agents allows the system to dynamically
+adapt to the variations, eventually to the disturbances of their
+environment. For this reason, we defend the thesis according to ** MAS
+are particularly appropriate for adapting to unknown data, to flows
+that are constantly evolving and to a dynamic computing environment**.
     
 ## Scientific project
 
-Ce projet consiste ainsi à adopter une approche interdisciplinaire,
-mêlant Informatique et Économétrie, pour relever :
-*	les défis liés à la gestion des données notamment le calcul
-     intensif sur des grands volumes de données et le parallélisme
-     dirigé par les données ;  
-*	les défis liés à l’extraction de connaissances notamment la
-     recherche d’information et les requêtes complexes sur les grandes
-     données.  
+This project adopts an interdisciplinary approach, mixing Computer
+Science and Economy, to identify:
 
-Dans le cadre du projet **mas4data** nous travaillons sur la
-conception d'un système multi-agents implémentant MapReduce où
-l'allocation dynamique des tâches repose sur une négociation entre
-reducers.  **Ce système est dynamique, décentralisé, sans historique
-ni connaissance a priori des données et il ne nécessite pas de
-paramétrage dépendant des données**.
-  
-Notre SMA utilise plusieurs enchères distribuées et simultanées auxquelles
-participent des agents adaptatifs qui prennent des décisions basées
-sur des informations locales.
+* the challenges related to data management, including computing on
+      large volumes of data and data-oriented parallelism;
+* the challenges related to the knowledge discovery including
+      information retrieval and complex queries on large data.
 
-Dans certains cas, pour permettre une meilleur répartition des tâches, nous sommes
-capables de diviser les grandes tâches en plusieurs sous-tâches pour ensuite agréger
-leurs résultats intermédiaires  et construire le résultat final.
-
-Pour l'instant, nous nous sommes focalisés sur la phase Reduce mais
-l'optimisation de la phase Map pourrait aussi être mise en oeuvre par
-un SMA.  
-
-Nous envisageons d'adapter le réseau d'accointances des
-agents pour construire des groupes qui négocient indépendamment les
-uns des autres. Typiquement dans un système distribué, le coût de
-communication dépend de la topologie du réseau, c'est-à-dire des
-contraintes physiques. Une solution consiste à adapter les groupes au
-réseau physique et donc répartir physiquement les négociations.  Enfin
-nous souhaitons optimiser non seulement la répartition de l'activité
-au sein du SMA durant le traitement d'un job MapReduce, mais aussi
-durant l'exécution d'un enchaînement de jobs (MapReduce Chaining), et
-l'exécution concurrente de plusieurs jobs, en tenant compte de
-l'activité des agents et la localité des données.
+As part of the **MAS4Data** project we are working on the design of a
+multiagent system implementing the MapReduce design pattern where the
+dynamic allocation of tasks is based on negotiation between
+reducers. **This system is dynamic, decentralized, with neither
+history nor a priori knowledge of the data and it does not require a
+parameterization dependent on the data**. Our SMA is build on on many
+distributed and concurrent auctions which involve adaptive agents
+taking decisions based on localinformation.
 
 ## References
 
@@ -129,23 +100,26 @@ Principles (SOSP ’07), pp. 205–220.
 
 ## People
 
-* Quentin BAERT, PhD candidtate
+* Quentin BAERT, CRIStAL/Lille1 
 
-* Anne-Cécile CARON,  Associate Professor
+* (Anne-Cécile CARON)[http://www.lifl.fr/~caronc],  CRIStAL/Lille1 
 
-* Maxime MORGE, Associate Professor
+* Virginie DELSART, Clersé/Lille1
 
-* Jean-Christophe ROUTIER, Professor
+* (Maxime MORGE)[http://www.lifl.fr/~morge], 
 
+* (Jean-Christophe ROUTIER)[http://www.lifl.fr/~routier], CRIStAL/Lille1
+
+* Nicolas VANEECLOO, Clersé/Lille1
 
 ## Publications
 
-- *Allocation équitable de tâches pour l'analyse de données massives.*
+- *(Allocation équitable de tâches pour l'analyse de données massives)[https://hal.archives-ouvertes.fr/hal-01383096].*
 Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe
 Routier, dans les actes des 24èmes Journées Francophones sur les
 Systèmes Multi-Agents 2016 (JFSMA'2016). Hermès. pp. 55-64. 2016.
 
-- *Fair Multi-Agent Task Allocation for Large Data Sets Analysis.*
+- *(Fair Multi-Agent Task Allocation for Large Data Sets Analysis)[https://hal.archives-ouvertes.fr/hal-01327522].*
 Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe
 Routier, dans les actes de 14th International Conference on Practical
 Applications of Agents and Multi-Agent Systems (PAAMS'2016). LNAI
