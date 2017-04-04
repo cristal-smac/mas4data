@@ -1,20 +1,19 @@
-# MAS4Data : Multiagent systems for analyzing very large Data sets 
+# MAS4Data : Multiagent systems for analyzing very large data sets 
 
 ## Context 
 
 ### MapReduce
 
 Data Science aims at processing large volumes of data to extract
-knowledge or insights. The volume and velocity of the available data to
-analyze requires to parallelize the processing as it can be done with
-the MapReduce design pattern [1](#1). The latter takes its
-name from the functions on which it is based: the *map* function
-which filters the data and the *reduce* function which aggregates
-them. The most popular framework for MapReduce is Hadoop but many
-other implementations exist, like the cluster computing framework
-Spark [2](#2), or the distributed NoSQL database Riak
-built from Amazon Dynamo [3](#3).
-
+knowledge or insights. The volume and velocity of the available data
+to analyze requires to parallelize the processing as it can be done
+with the MapReduce design pattern [(Dean and Ghemawat, 2008](#1). The
+latter takes its name from the functions on which it is based: the
+*map* function which filters the data and the *reduce* function which
+aggregates them. The most popular framework for MapReduce is Hadoop
+but many other implementations exist, like the cluster computing
+framework Spark [(Zaharia et al., 2016)](#2), or the distributed NoSQL
+database Riak built from Amazon Dynamo [(DeCandia et al., 2007)](#3).
 
 Data flows can have periodic (daily, weekly or seasonal) and
 event-triggered peak data loads. These peaks can be challenging to
@@ -43,7 +42,7 @@ systems are inherently adaptive and thus particularly suitable when
 workloads constantly evolve.
 
 The SMAC team (Multiagent systems and behaviours) of the laboratory
-(CRIStAL)[http://cristal.univ-lille.fr/] use the **multiagent systems
+(http://cristal.univ-lille.fr)[CRIStAL] use the **multiagent systems
 ** paradigm (MAS), in particular for complex distributed problem
 solving. For this purpose, a MAS is composed of many entities which
 aim at solving a complex problem which cannot be done by a single
@@ -102,13 +101,13 @@ Principles (SOSP ’07), pp. 205–220.
 
 * Quentin BAERT, CRIStAL/Lille1 
 
-* (Anne-Cécile CARON)[http://www.lifl.fr/~caronc],  CRIStAL/Lille1 
+* (http://www.lifl.fr/~caronc)[Anne-Cécile CARON],  CRIStAL/Lille1 
 
 * Virginie DELSART, Clersé/Lille1
 
-* (Maxime MORGE)[http://www.lifl.fr/~morge], 
+* (http://www.lifl.fr/~morge)[Maxime MORGE], CRIStAL/Lille1
 
-* (Jean-Christophe ROUTIER)[http://www.lifl.fr/~routier], CRIStAL/Lille1
+* (http://www.lifl.fr/~routier)[Jean-Christophe ROUTIER], CRIStAL/Lille1
 
 * Nicolas VANEECLOO, Clersé/Lille1
 
