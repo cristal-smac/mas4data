@@ -7,13 +7,13 @@
 Data Science aims at processing large volumes of data to extract
 knowledge or insights. The volume and velocity of the available data to
 analyze requires to parallelize the processing as it can be done with
-the MapReduce design pattern [](). The latter takes its
+the MapReduce design pattern [1](#1). The latter takes its
 name from the functions on which it is based: the *map* function
 which filters the data and the *reduce* function which aggregates
 them. The most popular framework for MapReduce is Hadoop but many
 other implementations exist, like the cluster computing framework
-Spark [](), or the distributed NoSQL database Riak
-built from Amazon Dynamo []().
+Spark [2](#2), or the distributed NoSQL database Riak
+built from Amazon Dynamo [3](#3).
 
 
 Data flows can have periodic (daily, weekly or seasonal) and
@@ -113,18 +113,18 @@ l'activité des agents et la localité des données.
 
 ## References
 
-Dean, J. and Ghemawat, S. (2008), Mapreduce: simplified data
+<a name="1">Dean, J. and Ghemawat, S. (2008)</a>, Mapreduce: simplified data
 processing on large clusters, Commun. ACM 51(1), 107–113.
 
-Zaharia, M., Xin, R. S., Wendell, P., Das, T., Armbrust, M., Dave, A.,
+<a name="2">Zaharia, M., Xin, R. S., Wendell, P., Das, T., Armbrust, M., Dave, A.,
 Meng, X., Rosen, J., Venkataraman, S., Franklin, M. J., Ghodsi, A.,
-Gonzalez, J., Shenker, S. and Stoica, I. (2016), Apache spark: a
+Gonzalez, J., Shenker, S. and Stoica, I. (2016)</a>, Apache spark: a
 unified engine for big data processing, Commun. ACM 59(11), 56– 65.
 
-DeCandia, G., Hastorun, D., Jampani, M., Kakulapati, G., Lakshman, A.,
-Pilchin, A., Sivasubramanian, S., Vosshall, P. and Vogels,
-W. (2007), Dynamo: Amazon’s highly available key-value store, in
-Proc. of the 21st ACM SIGOPS Symposium on Operating Systems
+<a name="3">DeCandia, G., Hastorun, D., Jampani, M., Kakulapati, G.,
+Lakshman, A., Pilchin, A., Sivasubramanian, S., Vosshall, P. and
+Vogels, W. (2007)</a>, Dynamo: Amazon’s highly available key-value store,
+in Proc. of the 21st ACM SIGOPS Symposium on Operating Systems
 Principles (SOSP ’07), pp. 205–220.
 
 ## People
