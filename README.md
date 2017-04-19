@@ -119,13 +119,45 @@ Routier, dans les actes des 24èmes Journées Francophones sur les
 Systèmes Multi-Agents 2016 (JFSMA'2016). Hermès. pp. 55-64. 2016.
 
 - *[Fair Multi-Agent Task Allocation for Large Data Sets Analysis](https://hal.archives-ouvertes.fr/hal-01327522).*
-Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe
-Routier, dans les actes de 14th International Conference on Practical
-Applications of Agents and Multi-Agent Systems (PAAMS'2016). LNAI
-9662, pp. 24-35. 2016.
+Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier, in 14th
+International Conference on Practical Applications of Agents and Multi-Agent
+Systems (PAAMS'2016). LNAI 9662, pp. 24-35. 2016.
+
+_Abstract_: Many companies are using MapReduce applications to pro- cess very
+large amounts of data. Static optimization of such applications is complex
+because they are based on user-defined operations, called map and reduce, which
+prevents some algebraic optimization. In order to opti- mize the task
+allocation, several systems collect data from previous runs and predict the
+performance doing job profiling. However they are not effective during the
+learning phase, or when a new type of job or data set appears. In this paper, we
+present an adaptive multi-agent system for large data sets analysis with
+MapReduce. We do not preprocess data and we adopt a dynamic approach, where the
+reducer agents interact during the job. In order to decrease the workload of the
+most loaded reducer - and so the execution time - we propose a task
+re-allocation based on negotiation.
+
+
+## Internal reports
+
+- *[Fair Multi-Agent Task Allocation for Large Data Sets Analysis].*
+Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier in
+Knowledge and Information Systems (KAIS)
+
+_Abstract_: MapReduce is a design pattern for processing large datasets
+distributed on a cluster. Its performances are linked to the data structure and
+the runtime environ- ment. Indeed, data skew can yield an unfair task
+allocation, but even when the initial allocation produced by the partition
+function is well balanced, an unfair allocation can occur during the reduce
+phase due to the heterogeneous performance of nodes. For these reasons, we
+propose an adaptive multi-agent system. In our approach, the re- ducer agents
+interact during the job and the task re-allocation is based on negotiation in
+order to decrease the workload of the most loaded reducer and so the runtime. In
+this paper, we propose and evaluate two negotiation strategies. Finally, we
+experiment our multi-agent system with real-world datasets over heterogeneous
+runtime environment.
+
 
 ## Grant
 
 This project is supported by the
 [CNRS Challenge Mastodons](http://www.cnrs.fr/mi/spip.php?article53).
-
