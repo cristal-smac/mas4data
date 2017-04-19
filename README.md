@@ -1,6 +1,6 @@
-# MAS4Data : Multiagent systems for analyzing very large data sets 
+# MAS4Data : Multiagent systems for analyzing very large data sets
 
-## Context 
+## Context
 
 ### MapReduce
 
@@ -22,9 +22,9 @@ manage. In the existing frameworks, an efficient task distribution
 distribution. The partitioning is *a priori* fixed and so the workload
 is not necessarily uniformly distributed. In a similar way, the usage
 of an heterogeneous cluster environment can lead to a workload
-unevenly distributed between the reducers. 
+unevenly distributed between the reducers.
 
-These skews have been studied and corrected with: 
+These skews have been studied and corrected with:
 
 1. a pre-processing of the data which raises the problem
    of building a representative sample;
@@ -61,7 +61,7 @@ adapt to the variations, eventually to the disturbances of their
 environment. For this reason, we defend the thesis according to which
 **MAS are particularly appropriate for adapting to unknown data, flows
 that are constantly evolving and dynamic computing environments**.
-    
+
 ## Scientific project
 
 This project adopts an interdisciplinary approach, mixing Computer
@@ -99,9 +99,9 @@ Principles (SOSP ’07), pp. 205–220.
 
 ## People
 
-* Quentin BAERT, CRIStAL/Lille1 
+* Quentin BAERT, CRIStAL/Lille1
 
-* [Anne-Cécile CARON](http://www.lifl.fr/~caronc),  CRIStAL/Lille1 
+* [Anne-Cécile CARON](http://www.lifl.fr/~caronc),  CRIStAL/Lille1
 
 * Virginie DELSART, Clersé/Lille1
 
@@ -139,7 +139,7 @@ re-allocation based on negotiation.
 
 ## Internal reports
 
-- *[Fair Multi-Agent Task Allocation for Large Data Sets Analysis].*
+- *Fair Multi-Agent Task Allocation for Large Data Sets Analysis.*
 Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier in
 Knowledge and Information Systems (KAIS)
 
