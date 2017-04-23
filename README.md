@@ -97,6 +97,37 @@ Vogels, W. (2007)</a>, Dynamo: Amazon’s highly available key-value store,
 in Proc. of the 21st ACM SIGOPS Symposium on Operating Systems
 Principles (SOSP ’07), pp. 205–220.
 
+## Example
+
+Refere to the `mas4data.mp4` video to see examples of task partitions with our
+MapReduce MAS. The job applied here uses real [meteo
+data](https://donneespubliques.meteofrance.fr/?fond=produit&id_produit=90&id_rubrique=32)
+and consists in couting the number of records by temperature in the whole
+dataset.
+
+On this video, you can see the task negotiations during the job proceedings. We
+use here the default MapReduce task partition as a reference point in order to
+show our MAS and its several features:
+
+1. The basic adaptive multi-agent system where each reducer is an agent which
+leads auctions and bids in order to improve the task partition;
+
+2. The multi-agent system with negotiations and the task split feature which
+allows to split tasks which are too big to be negotiated;
+
+3. The multi-agent system with task-split and the multi-auctions feature.
+Multi-auctions allow reducers to be bidder in more than one auction. It leads
+to a more effective negotiation process with more successfull auctions.
+
+Please note that:
+
+* Tasks with a black border are currently performed by the reducer. Tasks with a
+  green border are already performed.
+
+* In order to see them properly, small tasks are graphically bigger than they
+  should be. Thus, the task partition seems unfair while its only a graphical
+  effect.
+
 ## People
 
 * Quentin BAERT, CRIStAL/Lille1
