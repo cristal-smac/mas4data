@@ -35,7 +35,7 @@ is not adapted with a variation of the data and treatments over time;
 3. a system requiring an expertise on the data (a priori
 knowledge) in order to set up the tools.
 
-## Multiagent systems
+### Multiagent systems
 
 By contrast, multiagent
 systems are inherently adaptive and thus particularly suitable when
