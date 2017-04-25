@@ -97,19 +97,23 @@ Vogels, W. (2007)</a>, Dynamo: Amazon’s highly available key-value store,
 in Proc. of the 21st ACM SIGOPS Symposium on Operating Systems
 Principles (SOSP ’07), pp. 205–220.
 
-## Example
+## Demonstration
 
-The following [video](mas4data.mp4) shows some examples of tasks
-allocation with our MAS. We consider here real-world weather
+<video src="fichiervideo.webm" autoplay>
+</video>
+
+The video shows some examples of tasks allocation with our MAS. We
+consider here real-world weather
 [data](https://donneespubliques.meteofrance.fr/?fond=produit&id_produit=90&id_rubrique=32)
-and we count the number of records by temperature in the whole dataset.
+and we count the number of records by temperature in the whole
+dataset.
 
 You can observe the task negotiations during the reducing phase. We
 use here the default Hadoop partitioning as a reference point in
 order to illustrate several features of our MAS:
 
 1. The basic adaptation of our multiagent system, where each reducer
-is an negotiating agent, improves the tasks allocation;
+is a negotiating agent, improves the tasks allocation;
 
 2. The extension of our multiagent system, where the tasks are
 divisible, allows the negotiation of expensive tasks;
