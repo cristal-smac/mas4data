@@ -99,34 +99,33 @@ Principles (SOSP ’07), pp. 205–220.
 
 ## Example
 
-Refere to the `mas4data.mp4` video to see examples of task partitions with our
-MapReduce MAS. The job applied here uses real [meteo
-data](https://donneespubliques.meteofrance.fr/?fond=produit&id_produit=90&id_rubrique=32)
-and consists in couting the number of records by temperature in the whole
-dataset.
+The following [video](mas4data.mp4) shows some examples of tasks
+allocation with our MAS. We consider here real-world weather
+[data](https://donneespubliques.meteofrance.fr/?fond=produit&id_produit=90&id_rubrique=32)
+and we count the number of records by temperature in the whole dataset.
 
-On this video, you can see the task negotiations during the job proceedings. We
-use here the default MapReduce task partition as a reference point in order to
-show our MAS and its several features:
+You can observe the task negotiations during the reducing phase. We
+use here the default Hadoop partitioning as a reference point in
+order to illustrate several features of our MAS:
 
-1. The basic adaptive multi-agent system where each reducer is an agent which
-leads auctions and bids in order to improve the task partition;
+1. The basic adaptation of our multiagent system, where each reducer
+is an negotiating agent, improves the tasks allocation;
 
-2. The multi-agent system with negotiations and the task split feature which
-allows to split tasks which are too big to be negotiated;
+2. The extension of our multiagent system, where the tasks are
+divisible, allows the negotiation of expensive tasks;
 
-3. The multi-agent system with task-split and the multi-auctions feature.
-Multi-auctions allow reducers to be bidder in more than one auction. It leads
-to a more effective negotiation process with more successfull auctions.
+3. The multi-auctions extension, which allows reducers to be a bidder
+in more than one auction at the same time, improves the efficiency of
+the negotiation process.
 
-Please note that:
+Please note that in the video:
 
-* Tasks with a black border are currently performed by the reducer. Tasks with a
-  green border are already performed.
+* the tasks with a black border are currently performed by the reducer
+  while the tasks with a green border are already performed;
 
-* In order to see them properly, small tasks are graphically bigger than they
-  should be. Thus, the task partition seems unfair while its only a graphical
-  effect.
+* the cheap tasks are graphically bigger than they should be in order
+  to be see properly. Thus, the unfairness of the tasks allocation is
+  a graphical effect.
 
 ## People
 
@@ -172,7 +171,7 @@ re-allocation based on negotiation.
 
 - *Fair Multi-Agent Task Allocation for Large Data Sets Analysis.*
 Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier in
-Knowledge and Information Systems (KAIS)
+Knowledge and Information Systems
 
 _Abstract_: MapReduce is a design pattern for processing large datasets
 distributed on a cluster. Its performances are linked to the data structure and
