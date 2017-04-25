@@ -99,12 +99,9 @@ Principles (SOSP ’07), pp. 205–220.
 
 ## Demonstration
 
-<video src="fichiervideo.webm" autoplay>
-</video>
-
-The video shows some examples of tasks allocation with our MAS. We
+The [video](https://youtu.be/KLRTV9Wf0rg) shows some examples of tasks allocation with our MAS. We
 consider here real-world weather
-[data](https://donneespubliques.meteofrance.fr/?fond=produit&id_produit=90&id_rubrique=32)
+[data](https://donneespubliques.meteofrance.fr/?fond=produit&id_produit=90&id_rubrique=32g)
 and we count the number of records by temperature in the whole
 dataset.
 
