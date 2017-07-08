@@ -144,6 +144,38 @@ Please note that in the video:
 
 ## Publications
 
+
+- *Fair Multi-Agent Task Allocation for Large Data Sets Analysis.*
+Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier in
+Knowledge and Information System (KAIS). To appear
+
+_Abstract_: MapReduce is a design pattern for processing large datasets
+distributed on a cluster. Its performances are linked to the data structure and
+the runtime environ- ment. Indeed, data skew can yield an unfair task
+allocation, but even when the initial allocation produced by the partition
+function is well balanced, an unfair allocation can occur during the reduce
+phase due to the heterogeneous performance of nodes. For these reasons, we
+propose an adaptive multi-agent system. In our approach, the re- ducer agents
+interact during the job and the task re-allocation is based on negotiation in
+order to decrease the workload of the most loaded reducer and so the runtime. In
+this paper, we propose and evaluate two negotiation strategies. Finally, we
+experiment our multi-agent system with real-world datasets over heterogeneous
+runtime environment.
+
+- *Stratégie de découpe de tâche pour le traitement de données massives*
+Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier, 
+dans les actes des 25èmes Journées Francophones sur les
+Systèmes Multi-Agents 2017 (JFSMA'2017). Hermès. pp. 65-75. 2017.
+
+_Abstract_: MapReduce is a design pattern for processing large data
+sets distributed on a cluster. Its performances are linked to data
+skews. In order to takle the latter, we propose an adaptive
+multi-agent.  The agents interact during the job and the dynamic
+tasks allocation is the outcome of negotiations in order to relieve
+the most loaded agent and so the running time.  In this paper, we
+show how, when a task is too expensive to be negotiated, an agent
+can split it in order to negotiate its sub-tasks.
+
 - *[Allocation équitable de tâches pour l'analyse de données massives](https://hal.archives-ouvertes.fr/hal-01383096).*
 Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe
 Routier, dans les actes des 24èmes Journées Francophones sur les
@@ -166,27 +198,6 @@ MapReduce. We do not preprocess data and we adopt a dynamic approach, where the
 reducer agents interact during the job. In order to decrease the workload of the
 most loaded reducer - and so the execution time - we propose a task
 re-allocation based on negotiation.
-
-
-## Internal reports
-
-- *Fair Multi-Agent Task Allocation for Large Data Sets Analysis.*
-Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier in
-Knowledge and Information Systems
-
-_Abstract_: MapReduce is a design pattern for processing large datasets
-distributed on a cluster. Its performances are linked to the data structure and
-the runtime environ- ment. Indeed, data skew can yield an unfair task
-allocation, but even when the initial allocation produced by the partition
-function is well balanced, an unfair allocation can occur during the reduce
-phase due to the heterogeneous performance of nodes. For these reasons, we
-propose an adaptive multi-agent system. In our approach, the re- ducer agents
-interact during the job and the task re-allocation is based on negotiation in
-order to decrease the workload of the most loaded reducer and so the runtime. In
-this paper, we propose and evaluate two negotiation strategies. Finally, we
-experiment our multi-agent system with real-world datasets over heterogeneous
-runtime environment.
-
 
 ## Grant
 
