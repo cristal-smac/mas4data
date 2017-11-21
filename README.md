@@ -144,10 +144,22 @@ Please note that in the video:
 
 ## Publications
 
+- *Negotiation Strategy of Divisible Tasks for Large Dataset Processing*
+Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier in the 15th
+European Conference on Multi-Agent Systems (EUMAS'2017). Evry, 14-15 December 2017.
 
-- *Fair Multi-Agent Task Allocation for Large Data Sets Analysis.*
+_Abstract_: MapReduce is a design pattern for processing large datasets on a cluster. 
+Its performances depend on some data skews and on the runtime environment. 
+In order to tackle these problems, we propose an adaptive multiagent system. 
+The agents interact during the data processing and the dynamic task allocation is the outcome of negotiations. 
+These negotiations aim at improving the workload partition among the nodes within a cluster 
+and so decrease the runtime of the whole process. 
+Moreover, since the negotiations are iterative the system is responsive in case of node performance variations. 
+In this full original paper, we show how, when a task is divisible, an agent may split it in order to negotiate its subtasks.
+
+- *[Fair Multi-Agent Task Allocation for Large Data Sets Analysis.](https://doi.org/10.1007/s10115-017-1087-4)*
 Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier in
-Knowledge and Information System (KAIS). To appear
+Knowledge and Information System (KAIS) 2017.
 
 _Abstract_: MapReduce is a design pattern for processing large datasets
 distributed on a cluster. Its performances are linked to the data structure and
@@ -155,7 +167,7 @@ the runtime environ- ment. Indeed, data skew can yield an unfair task
 allocation, but even when the initial allocation produced by the partition
 function is well balanced, an unfair allocation can occur during the reduce
 phase due to the heterogeneous performance of nodes. For these reasons, we
-propose an adaptive multi-agent system. In our approach, the re- ducer agents
+propose an adaptive multi-agent system. In our approach, the reducer agents
 interact during the job and the task re-allocation is based on negotiation in
 order to decrease the workload of the most loaded reducer and so the runtime. In
 this paper, we propose and evaluate two negotiation strategies. Finally, we
@@ -189,7 +201,7 @@ Systems (PAAMS'2016). LNAI 9662, pp. 24-35. 2016.
 _Abstract_: Many companies are using MapReduce applications to pro- cess very
 large amounts of data. Static optimization of such applications is complex
 because they are based on user-defined operations, called map and reduce, which
-prevents some algebraic optimization. In order to opti- mize the task
+prevents some algebraic optimization. In order to optimize the task
 allocation, several systems collect data from previous runs and predict the
 performance doing job profiling. However they are not effective during the
 learning phase, or when a new type of job or data set appears. In this paper, we
