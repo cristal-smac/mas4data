@@ -174,19 +174,10 @@ this paper, we propose and evaluate two negotiation strategies. Finally, we
 experiment our multi-agent system with real-world datasets over heterogeneous
 runtime environment.
 
-- *Stratégie de découpe de tâche pour le traitement de données massives*
+- *[Stratégie de découpe de tâche pour le traitement de données massives](https://hal.archives-ouvertes.fr/hal-01558607v1)*
 Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe Routier, 
 dans les actes des 25èmes Journées Francophones sur les
 Systèmes Multi-Agents 2017 (JFSMA'2017). Hermès. pp. 65-75. 2017.
-
-_Abstract_: MapReduce is a design pattern for processing large data
-sets distributed on a cluster. Its performances are linked to data
-skews. In order to takle the latter, we propose an adaptive
-multi-agent.  The agents interact during the job and the dynamic
-tasks allocation is the outcome of negotiations in order to relieve
-the most loaded agent and so the running time.  In this paper, we
-show how, when a task is too expensive to be negotiated, an agent
-can split it in order to negotiate its sub-tasks.
 
 - *[Allocation équitable de tâches pour l'analyse de données massives](https://hal.archives-ouvertes.fr/hal-01383096).*
 Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe
