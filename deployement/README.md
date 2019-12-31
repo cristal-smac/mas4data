@@ -1,67 +1,50 @@
-# Déploiement du prototype MAS4DATA
+# Deployement of the MAS4Data prototype 
 
-Avant de pouvoir déployer le prototype sur le cluster et ainsi pouvoir lancer un job MapReduce, il est nécessaire de suivre les instructions suivantes.
+Please use the following instructions.
 
-## Préambule
+## Preamble
 
-Ici, on appelle `Monitor` la machine "maître", c'est-à-dire celle à partir de laquelle sera lancée l'exécution et sur laquelle se trouveront les résultats de l'exécution.
+We call here `Monitor` the master node where the run is launched and the results are written.
 
-### Prévoir le nom qui sera donné à l'`ActorSystem` déployé lors de l'exécution
+### Name of the ActorSystem
 
-Lors de l'exécution MapReduce, les agents mappers et reducers distants sont créés dans un `ActorSystem` commun. Cet `ActorSystem` devra être nommé à l'exécution mais son nom est nécessaire pour l'étape de configuration préalable. Par la suite, nous l'appellerons `RemoteAS`.
+Te remote mappers and reducers are created within an ActorSystem. The
+latter must have a name which is required for the
+pre-configuration. We will call it `RemoteAS` and we will use the port
+`6666`.
 
-Il est également nécessaire de prévoir le port qui sera dédié à l'`ActorSystem` pour communiquer avec les autres machines distantes. Ici, nous utiliserons le port `6666`.
+### Create a file which contains the IP addresses of the remote nodes. 
 
-### Créer un fichier qui contient l'ensemble des adresses IP des machines distantes utilisées lors de l'exécution
+This file contain one IP address per line. We will call it `my_ips.txt`.
 
-Ce fichier doit contenir l'ensemble des adresses IP des machines distantes utilisées lors de l'exécution MapReduce. Il contient une adresse IP par ligne. Par la suite, nous appellerons ce fichier `mes_ip.txt`.
 
-### Créer deux fichiers qui répartissent les mappers et les reducers sur les différentes machines
+### Create two files which distribute the mappers and the reducers among the nodes.
 
-Lors de l'exécution, il faut que le `Monitor` puisse déterminer comment répartir les agents parmi les différentes machines utilisées. Pour cela, créer deux fichiers que nous appellerons `remote_mappers.txt` et `remote_reducers.txt`.
-
-Pour indiquer que des agents doivent être déployer sur un `ActorSystem`, indiquer l'adresse de l'`ActorSystem` suivie d'un espace puis du nombre d'agent à y déployer.
-
-Par exemple, pour déployer 5 mappers sur la machine `172.18.12.221`, indiquer la ligne suivante dans le fichier `remote_mappers.txt` :
+The `Monitor` must know where the agents are deployed. For this
+purpose, we create two files called `remote_mappers.txt` and
+`remote_reducers.txt`.  Each line contains the IP address of the node
+followed by a space and then the number of agents deployed on this
+node. For instance, 5 mappers are deploeyd on `172.18.12.221'
+according to the followed `remote_mappers.txt' file:
 
 ```
 akka.tcp://RemoteAS@172.18.12.221:6666 5
 ```
 
-Si le fichier de configuration indique plus d'agents à déployer qu'il n'y en a de renseignés dans les fichiers `remote_mappers.txt` et `remote_reducers.txt`, les agents restant seront déployés localement sur la machine du `Monitor`.
+### Split the data and distribute them among the nodes.
 
-### Découper les données et les distribuer sur les machines mappers
 
-Il est préférable de découper les données d'entrée et de distribuer chaque fragment sur la machine du mapper qui est censé l'exécuter.
+A data split os called `mapperX.txt` where `X` is the number of the
+split. We create one data split per mapper. Each data split must be on
+the node where the corresponding mapper is. See the scripts in this
+directory.
 
-Un fragment doit se nommer `mapperX.txt`, avec `X` le numéro du fragment.
 
-Il est commun de créer un fragment par mapper. Cependant, s'il existe `X` fragments et `Y` mappers et que `X > Y` alors le fragment `x` est attribué au mapper `x % Y`.
+### Create a configuration file 
 
-Les fragments doivent tous se trouver au même endroit sur les machines mapper. Ainsi si un dossier `Data` se trouve à la racine de chaque machine mapper, le fragment `x` se trouve dans le dossier `Data` du mapper `x % Y`. Par exemple, pour 10 mappers et 12 fragments, on devrait retrouver la trace suivante :
+#### Setup
 
-```
-mapper1 ~$ cd Data
-mapper1 ~/Data$ ls
-mapper1.txt    mapper11.txt
-```
-
-Pour cela, utiliser le script `uploadfile.sh` qui permet de télécharger un fichier sur une machine distante.
-
-```
-deployement/uploadfile.sh <login> <nodeIP> <fileToUpload> <pathOnTheNode>
-```
-
-- `<login>` : le login de l'utilisateur sur les machines distantes ;
-- `<nodeIP>` : l'adresse IP de la machine distante sur laquelle uploader le fichier ;
-- `<fileToUpload>` : le chemin local vers le fichier à télécharger sur la machine distante ;
-- `<pathOnTheNode` : le chemin auquel télécharger le fichier sur la machine distante.
-
-### Créer un fichier de configuration valide
-
-#### Entrées du fichier de configuration
-
-| Entrée du fichier de configuration | Type | Valeur à associer |
+| Configuration parameter | Type | Value |
 |:-----------------------------------|:-----|:------------------|
 | nb-mapper | INT | Nombre de mappers |
 | nb-reducer | INT | Nombre de reducers |

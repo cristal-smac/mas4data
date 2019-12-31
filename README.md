@@ -61,7 +61,7 @@ situated task allocation supports two additional crucial requirements
 concurrent, and (b) adaptation -- where task reallocation is triggered
 when a disruptive event is performed. 
 
-See the following instructions for the [deployement](deployement/README.md)
+See the following instructions for the [deployement](deployement/README.md).
 
 ## References
 
