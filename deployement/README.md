@@ -8,7 +8,7 @@ We call here `Monitor` the master node where the run is launched and the results
 
 ### Name of the ActorSystem
 
-Te remote mappers and reducers are created within an ActorSystem. The
+The remote mappers and reducers are created within an ActorSystem. The
 latter must have a name which is required for the
 pre-configuration. We will call it `RemoteAS` and we will use the port
 `6666`.
@@ -24,8 +24,8 @@ The `Monitor` must know where the agents are deployed. For this
 purpose, we create two files called `remote_mappers.txt` and
 `remote_reducers.txt`.  Each line contains the IP address of the node
 followed by a space and then the number of agents deployed on this
-node. For instance, 5 mappers are deploeyd on `172.18.12.221'
-according to the followed `remote_mappers.txt' file:
+node. For instance, 5 mappers are deployed on `172.18.12.221`
+according to the followed `remote_mappers.txt` file:
 
 ```
 akka.tcp://RemoteAS@172.18.12.221:6666 5
@@ -34,7 +34,7 @@ akka.tcp://RemoteAS@172.18.12.221:6666 5
 ### Split the data and distribute them among the nodes.
 
 
-A data split os called `mapperX.txt` where `X` is the number of the
+A data split is called `mapperX.txt` where `X` is the number of the
 split. We create one data split per mapper. Each data split must be on
 the node where the corresponding mapper is. See the scripts in this
 directory.
@@ -44,55 +44,49 @@ directory.
 
 #### Setup
 
-| Configuration parameter | Type | Value |
+| Configuration parameter | Type | Example |
 |:-----------------------------------|:-----|:------------------|
-| nb-mapper | INT | Nombre de mappers |
-| nb-reducer | INT | Nombre de reducers |
-| pb | STRING | Job MapReduce exécuté |
-| task-bundle-management-strategy | STRING | Stratégie de sélection de tâches |
-| threshold | DOUBLE | Seuil pour considérer une délégation de tâche comme socialement rationnelle |
-| bidder-max-auction | either STRING(none) or INT | Nombre maximum d'enchère dans lesquelles s'engage un bidder |
-| partition-strategy | STRING | Méthode de répartition des clés aux reducers par le `Partitioner` |
-| task-cost-strategy | STRING | Fonction de coût |
-| inform-contribution-frequency | INT | Fréquence de prise en charge du message `InformContribution` par le `Manager` |
-| init-file | STRING | Chemin vers le fichier qui contient les données d'entrées |
-| init-chunks | BOOLEAN | Si `false`, c'est au `Monitor` de créer les fragments à partir des données d'entrée |
-| init-chunks-path | STRING | Chemin vers les fragments (par exemple `~/Data`) |
-| init-chunks-number | INT | Nombre de fragments disponibles |
-| chunk-size | INT | Taille des shunts créés par les mappers |
-| result-path | STRING | Chemin vers le dossier qui contiendra les résultat de l'exécution |
-| initiator-timeout | INT | Timeout (en ms) utilisé par les initiateurs |
-| bidder-timeout | INT | Timeout (en ms) utilisé par les bidders |
-| contractor-timeout | INT | Timeout (en ms) utilisé par un bidder en tant que contractor |
-| acknowledgment-timeout | INT | Timeout (en ms) utilisé par les agents en attente d'un accusé de réception |
-| pause-mili | INT | Pause (en ms) appliquée par le worker entre le traitement de deux clés |
-| pause-nano | INT | Pause (en ns) appliquée par le worker entre le traitement de deux clés |
-| debug-reducer | BOOLEAN | Si `true` imprime les traces du reducer lors d'une exécution |
-| debug-manager | BOOLEAN | Si `true` imprime les traces du manager lors d'une exécution |
-| debug-broker | BOOLEAN | Si `true` imprime les traces du broker lors d'une exécution |
-| debug-rfh | BOOLEAN | Si `true` imprime les traces de l'agent `RemoteFileHandler` lors d'une exécution |
-| debug-monitor | BOOLEAN | Si `true` imprime les traces du `Monitor` lors d'une exécution |
-| remote | BOOLEAN | Si `true`, le `Monitor` cherche à lancer l'exécution de manière distribuée |
-| remote-mappers | STRING | Chemin vers le fichier qui contient la distribution des mappers (par exemple `remote_mappers.txt`) |
-| remote-reducers | STRING | Chemin vers le fichier qui contient la distribution des reducers (par exemple `remote_reducers.txt`) |
-| gnuplot-max-taskdone-number | INT | Estimation du nombre maximum de tâches exécutées par un reducer (permet une génération correcte des courbes _post run_)
-| gnuplot-title | STRING | Titre donné à la figure qui présentera les contributions des reducers lors de l'exécution |
-| gnuplot-output-filename | STRING | Nom du fichier qui présentera les contributions des reducers lors de l'exécution |
-| gnuplot-output-format | STRING | Format du fichier de résultat (généralement `png` ou `pdf`) |
-| task-monitor | BOOLEAN | Si `true` affiche en temps réel les contributions des reducers au cours de l'exécution |
-| monitor-task-scale | STRING | Dans le cas d'un affichage en temps réel des contribution, échelle initiale pour la représentation des tâches |
-| monitor-task-scale-step | INT | Valeur utilisée pour faire croître ou décroître l'échelle de la représentation des tâches |
+| nb-mapper | INT | 16 |
+| nb-reducer | INT | 16 |
+| pb | STRING | `meteoRecordByTemperatureStation` |
+| task-bundle-management-strategy | STRING | `csdb` or `cbds` or `ownership` |
+| threshold | DOUBLE | `1` without negotiation or `0` with negotiation |
+| bidder-max-auction | STRING/INT | `none` or maximum number of concurrent bids, e.g. `1` |
+| partition-strategy | STRING | `naive` |
+| task-cost-strategy | STRING | `(multiplier, 2)` |
+| inform-contribution-frequency | INT |  `1` |
+| init-source-type | STRING | `file` |
+| init-file | STRING | `/mnt/Data/MeteoFrance/synop2019.csv` |
+| init-chunks | BOOLEAN | `false` |
+| init-chunks-path | STRING | `/mnt/Data/MeteoFrance/` |
+| init-chunks-number | INT | 8 |
+| chunk-size | INT | 50000 |
+| result-path | STRING | `/mnt/results` |
+| initiator-timeout | INT | 300  |
+| bidder-timeout | INT | 600 |
+| contractor-timeout | INT | 300 |
+| acknowledgment-timeout | INT | 6000 |
+| pause-mili | INT | 0 |
+| pause-nano | INT | 0 |
+| debug-mapper | BOOLEAN | `false`  |
+| debug-reducer | BOOLEAN | `false`  |
+| debug-manager | BOOLEAN | `false`  |
+| debug-broker | BOOLEAN | `false`  |
+| debug-rfh | BOOLEAN | `false`  |
+| debug-monitor | BOOLEAN | `false`  |
+| remote | BOOLEAN | `true` |
+| remote-mappers | STRING | `config/remoteMappersCluster.txt` |
+| remote-reducers | STRING | `config/remoteReducersCluster.txt` |
+| gnuplot-max-taskdone-number | INT | 80000 |
+| gnuplot-title | STRING | `contribution` |
+| gnuplot-output-filename | STRING | `contribution` |
+| gnuplot-output-format | STRING | `png` |
+| task-monitor | BOOLEAN | `false`  |
+| monitor-task-scale | STRING | 150000 |
+| monitor-task-scale-step | INT | 100  |
 
-Certains des champs du fichier de configuration demandent l'entrée de mots clés. Le tableau suivant indique où trouver les mots clés pour chaque entrée qui le nécessite.
 
-| Entrée du fichier de configuration | Classe qui contient les mots clés |
-|:-----------------------------------|:-----------------------------------|
-| pb | `utils.config.JobHandler` |
-| task-bundle-management-strategy | `utils.config.TaskBundleHandler` |
-| partition-strategy | `utils.config.PartitionStrategyHandler` |
-| task-cost-strategy | `utils.config.TaskCostStrategyHandler` |
-
-#### Fichier config/configLocation.txt
+#### File `config/configLocation.txt`
 
 Le fichier `config/configLocagion.txt` indique quel est le chemin du fichier de configuration à considérer lors de la prochaine exécution. Il permet de pouvoir faire coexister plusieurs fichier de configurations et de passer de l'un à l'autre sans avoir à faire de copier-coller et ainsi risquer de perdre une configuration précédemment définie.
 
