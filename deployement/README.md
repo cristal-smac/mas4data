@@ -88,96 +88,56 @@ directory.
 
 #### File `config/configLocation.txt`
 
-Le fichier `config/configLocagion.txt` indique quel est le chemin du fichier de configuration à considérer lors de la prochaine exécution. Il permet de pouvoir faire coexister plusieurs fichier de configurations et de passer de l'un à l'autre sans avoir à faire de copier-coller et ainsi risquer de perdre une configuration précédemment définie.
+This file indicates the path of the configuration file for the next
+run.
 
-### Indiquer la bonne adresse IP dans le fichier `application.conf`
+### File `application.conf`
 
-Dans le fichier `src/main/resources/application.conf`, indiquer l'adresse IP du `Monitor` pour le champ `akka.remote.netty.tcp.hostname`.
+We modify in the file `src/main/resources/application.conf`, the IP
+adresses of the master node where the `Monitor` is deployed.
 
-### Ouvrir les ports sur les machines
+## Create the jar file
 
-Sur l'ensemble des machines utilisées lors de l'exécution, s'assurer que le port `6666` est ouvert.
-
-Sur chaque VM du cluster, utiliser la commande suivante :
-
-```iptables -A INPUT -p tcp --dport 6666```
-
-## Créer le .jar à déployer
-
-Depuis la racine.
 
 ```
 sbt daemon:assembly
 ```
 
-Au terme de la commande, le .jar à déployer se trouve au chemin suivant `./target/scala-2.11/daemon.jar`.
+The path of the jar file is `./target/scala-2.11/daemon.jar`.
 
-## Déployer le .jar sur les machines distantes
-
-```
-./deployement/deploy.sh <login> <nodesFile> <daemonJar> <distantPath>
-```
-
-Avec :
-
-- `<login>` : le login de l'utilisateur sur les machines distantes ;
-- `<nodesFile>` : le chemin vers le fichier qui contient la liste des adresses IP des machines distantes sur lesquels déployer le .jar (`mes_ip.txt`);
-- `<daemonJar>` : le chemin vers le .jar `daemon.jar` sur la machine locale ;
-- `<distantPath>` : le chemin auquel déposer le .jar sur les machines distantes.
-
-## Initialiser les `ActorSystem` sur les machines distantes
+## Deploy the jar file on the nodes
 
 ```
-./deployement/lauch.sh <login> <nodesFile> <daemonJar> <asName> <port>
+./deployement/deployCluster.sh 
 ```
 
-Avec :
+## Run the daemons
 
-- `<login>` : le login de l'utilisateur sur les machines distantes ;
-- `<nodesFile>` : le chemin vers le fichier qui contient la liste des adresses IP des machines distantes sur lesquels déployer le .jar ;
-- `<daemonJar>` : le chemin vers le .jar `daemon.jar` sur les machines distantes.
-- `<asName>` : nom de l'`ActorSystem` (par exemple `RemoteAS`) ;
-- `<port>` : port sur lequel écoute l'`ActorSystem`.
+```
+./scripts/launchCluster.sh
+```
 
-## Lancer l'exécution
-
-### Lancer une exécution unique
-
-Tout d'abord, s'assurer que le fichier `config/configLocation.txt` pointe bien vers le fichier de configuration à utiliser.
-
-Ensuite, générer le .jar exécutable.
+## Run the system
 
 ```
 sbt monitor:assembly
-```
-
-Enfin, lancer le .jar crée.
-
-```
 java -jar target/scala-2.11/monitor.jar mapreduce.adpative.Monitor
 ```
 
-### Lancer un ensemble d'exécution à l'aide d'un méta fichier de configuration
+### Run several experiments
 
-#### Méta fichier de configuration
-
-Il est également possible de lancer un ensemble d'exécution en faisant varier les paramètres des exécutions.
-
-Pour cela, il faut créer un méta fichier de configuration, c'est-à-dire un fichier de configuration à partir duquel générer plusieurs fichiers de configurations différents.
-
-La syntaxe d'un méta fichier de configuration est simple. Pour chaque entrée à faire varier, préfixer la ligne d'un caractère `*` et indiquer les différentes valeurs entre crochets, séparées d'un `;`. Par exemple, pour faire varier la stratégie de sélection de tâches utilisée :
+It is also possible to run several experiments with various
+parameters. For this purpose, we create a meta-configuration file in
+order to generate multiple configuration files. In the
+meta-configuration, each variable parameter is prefixed with the joker
+character `*` and the different values are in square brackets and
+separated by semicolon. E.g.
 
 ```
 * task-bundle-management-strategy : [ownership; (k-eligible-big, 2)]
 ```
 
-La ligne précédente donnera lieu à deux fichiers de configuration différents. Un premier pour lequel la valeur associée au champ `task-bundle-management-strategy` sera `ownership`. Un second pour lequel la valeur sera `(k-eligible-big,2)`.
-
-Un méta fichier de configuration représente l'ensemble des fichiers de configuration qui correspond au produit cartésien de chacun des champs de configuration marqué du caractère `*`.
-
-#### Lancement de l'exécution
-
-Il n'existe pour l'instant pas de .jar exécutable pour lancer un ensemble d'exécutions. Il faut donc utiliser la console de `sbt` pour être en mesure d'accéder à la classe `ExperimentsBuilder` du prototype.
+The execution is performed using the class `ExperimentsBuilder` 
 
 ```
 $ sbt console
@@ -185,16 +145,3 @@ $ sbt console
 > val eb = new ExperimentsBuilder(5, "exp", "config/configLocation.txt", "exp/config.txt")
 > eb.runAdaptive
 ```
-
-L'extrait de terminal précédent provoque les actions suivantes :
-
-1. Ouvrir la console de `sbt`.
-
-2. Importer la classe `ExperimentsBuilder` du prototype.
-
-3. Construire une instance `eb` de `ExperimentsBuilder`. D'après ces paramètres :
-    - `eb` lancera 5 exécutions par fichier de configuration généré à partir du méta fichier de configuration `exp/config.txt`.
-    - `eb` stockera les résultats de chacune des exécutions dans le dossier `exp`.
-    - `eb` écrira successivement le fichier de configuration courant dans le fichier `config/configLocation.txt`.
-
-4. Lancer l'ensemble des exécutions avec `eb.runAdaptive`.
