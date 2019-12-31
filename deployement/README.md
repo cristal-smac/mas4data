@@ -25,7 +25,7 @@ purpose, we create two files called `remoteMappersCluster.txt` and
 `remoteReducersCluster.txt`.  Each line contains the IP address of the node
 followed by a space and then the number of agents deployed on this
 node. For instance, 5 mappers are deployed on `172.18.12.221`
-according to the followed `remote_mappers.txt` file:
+according to the following `remoteMappersCluster.txt` file:
 
 ```
 akka.tcp://RemoteAS@172.18.12.221:6666 5
