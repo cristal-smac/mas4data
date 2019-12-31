@@ -15,14 +15,14 @@ pre-configuration. We will call it `RemoteAS` and we will use the port
 
 ### Create a file which contains the IP addresses of the remote nodes. 
 
-This file contain one IP address per line. We will call it `my_ips.txt`.
+This file contains one IP address per line. We will call it `my_ips.txt`.
 
 
 ### Create two files which distribute the mappers and the reducers among the nodes.
 
 The `Monitor` must know where the agents are deployed. For this
-purpose, we create two files called `remote_mappers.txt` and
-`remote_reducers.txt`.  Each line contains the IP address of the node
+purpose, we create two files called `remoteMappersCluster.txt` and
+`remoteReducersCluster.txt`.  Each line contains the IP address of the node
 followed by a space and then the number of agents deployed on this
 node. For instance, 5 mappers are deployed on `172.18.12.221`
 according to the followed `remote_mappers.txt` file:
