@@ -1,0 +1,50 @@
+// This default configuration file is incomplete, it is used by the newExpFolder
+// script
+
+// Number
+nb-mapper : 10
+nb-reducer : 20
+
+// Problem
+// pb : PLEASE DECOMMENT AND FILL IN THIS FIELD PLEASE
+
+// Strategies
+task-bundle-management-strategy : naive
+
+// Format of the data
+init-source-type : file
+init-chunks : false
+
+// Timeouts for the Broker
+initiator-timeout : 300
+bidder-timeout : 600
+contractor-timeout : 300
+aknowledgment-timeout : 300
+
+// Pause for the Worker
+pause-millis : 0
+pause-nanos : 0
+
+// Debug
+debug-reducer : true
+debug-manager : true
+debug-broker : true
+debug-worker : true
+debug-monitor : true
+
+// Gnuplot
+gnuplot-max-taskdone-number : 80
+// gnuplot-output-filename : PLEASE DECOMMENT AND FILL IN THIS FIELD PLEASE
+gnuplot-output-format : png
+// gnuplot-title : PLEASE DECOMMENT AND FILL IN THIS FIELD PLEASE
+
+// Monitor
+monitor-task-scale : 1500
+monitor-task-scale-step : 100
+task-monitor : false
+
+// Remote
+remote : false
+
+// result-path field is given by the newExpFolder script
+// init-file field is given by the newExpFolder script

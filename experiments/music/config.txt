@@ -1,0 +1,59 @@
+// Number
+nb-mapper : 12
+nb-reducer : 12
+
+// Problem
+pb : musicCountGrade
+
+// Strategies (k-eligible-big|k-eligible-small, kmax) | naive
+task-bundle-management-strategy : (k-eligible-small, 4)
+task-split : true
+bidder-max-auction : none
+threshold : 0
+partition-strategy : naive
+
+// Data and format
+init-source-type : file
+init-file : none
+init-chunks : true
+init-chunks-path : /Users/Athena/Desktop/music/
+// init-chunks-path : /local/baertqu/data/music/
+init-chunks-number : 12
+chunk-size : 50000
+
+// Result
+result-path : ./experiments/CountGrade/results/
+
+// Timeouts for the Broker
+initiator-timeout : 300
+bidder-timeout : 600
+contractor-timeout : 300
+aknowledgment-timeout : 6000
+
+// Pause for the Worker
+pause-millis : 0
+pause-nanos : 0
+
+// Debug
+debug-reducer : false
+debug-manager : false
+debug-broker : false
+debug-worker : false
+debug-rfh : false
+debug-monitor : true
+
+// Gnuplot
+gnuplot-max-taskdone-number : 80000
+gnuplot-output-filename : contributionAdaptive
+gnuplot-output-format : png
+gnuplot-title : adaptive contribution
+
+// Monitor
+monitor-task-scale : 150000
+monitor-task-scale-step : 100
+task-monitor : false
+
+// Remote
+remote-mappers : config/remoteMappers.txt
+remote-reducers : config/remoteReducers.txt
+remote : false

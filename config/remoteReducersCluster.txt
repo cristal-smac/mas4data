@@ -1,0 +1,8 @@
+akka.tcp://TestRemote@192.168.1.10:6666 1
+akka.tcp://TestRemote@192.168.1.3:6666 1
+akka.tcp://TestRemote@192.168.1.16:6666 1
+akka.tcp://TestRemote@192.168.1.14:6666 1
+akka.tcp://TestRemote@192.168.1.4:6666 1
+akka.tcp://TestRemote@192.168.1.6:6666 1
+akka.tcp://TestRemote@192.168.1.18:6666 1
+akka.tcp://TestRemote@192.168.1.8:6666 1

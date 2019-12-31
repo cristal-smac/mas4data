@@ -1,0 +1,9 @@
+ssh -i ${HOME}/.ssh/cloud-hpc-lille centos@193.50.94.122 'bash -s' < openNode.sh
+ssh -i ${HOME}/.ssh/cloud-hpc-lille centos@193.50.94.119 'bash -s' < openNode.sh 
+ssh -i ${HOME}/.ssh/cloud-hpc-lille centos@193.50.94.67 'bash -s' < openNode.sh  
+ssh -i ${HOME}/.ssh/cloud-hpc-lille centos@193.50.94.43 'bash -s' < openNode.sh 
+ssh -i ${HOME}/.ssh/cloud-hpc-lille centos@193.50.94.42 'bash -s' < openNode.sh 
+ssh -i ${HOME}/.ssh/cloud-hpc-lille centos@193.50.94.65 'bash -s' < openNode.sh 
+ssh -i ${HOME}/.ssh/cloud-hpc-lille centos@193.50.94.93 'bash -s' < openNode.sh 
+ssh -i ${HOME}/.ssh/cloud-hpc-lille centos@193.50.94.101 'bash -s' < openNode.sh  
+ssh -i ${HOME}/.ssh/cloud-hpc-lille centos@193.50.94.96 'bash -s' < openNode.sh 

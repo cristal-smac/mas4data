@@ -1,0 +1,718 @@
+#+TITLE Technical specification MAS4Data
+#+AUTHOR Maxime MORGE, Anne-Cécile CARON, Quentin BAERT
+#+STARTUP: showall
+
+* Underlying assumptions
+
+An agent [Hewitt, IJCAI74]:
+1. has an id
+2. is triggered by messages
+3. can create other agents
+
+Concerning the transport layer:
+
+- we do not make any assumption concerning the message delivery. It
+  means that messages may be lost. The only way for a sender to know
+  whether an interaction was successful is by receiving a
+  business-level acknowledgement message. However, we suppose that messages
+  within the same agent are not lost.
+
+- for a given pair of actors, messages sent from the first to the
+  second will not be received out-of-order.
+
+* Overview
+
+Interaction between Mappers and Reducers (Manager/Worker/Broker)
+
+#+begin_src plantuml :file 01internalAgent.png
+@startuml
+hide footbox
+skinparam monochrome true
+box "Reducer"
+participant Manager
+participant Broker
+participant Worker
+end box
+Mapper -> Manager : Request(task)
+class UnfinishTask{
+task : Task
+}
+SubmissionMessage <|-- Submit
+SubmissionMessage <|-- BrokerDeny
+SubmissionMessage <|-- BrokerAbort
+SubmissionMessage <|-- BrokerReady
+SubmissionMessage <|-- Approve
+SubmissionMessage <|-- Cancel
+SubmissionMessage <|-- BrokerFinish
+SubmissionMessage <|-- UnfinishTask
+
+RespondingMessage <|-- BrokerDeny
+RespondingMessage <|-- BrokerReady
+RespondingMessage <|-- Approve
+RespondingMessage <|-- Cancel
+RespondingMessage <|-- BrokerFinish
+RespondingMessage <|-- UnfinishTask
+}
+
+package negotiation{
+class Cfp{
+taskCost: Int
+initiatorContribution: Int
+}
+class Propose{
+participantContribution : Int
+}
+class Accept{
+task: Task
+}
+NegotiatingMessage <|-- Cfp
+NegotiatingMessage <|-- Propose
+NegotiatingMessage <|-- Decline
+NegotiatingMessage <|-- Accept
+NegotiatingMessage <|-- Reject
+NegotiatingMessage <|-- Confirm
+RespondingMessage <|-- Propose
+RespondingMessage <|-- Decline
+RespondingMessage <|-- Accept
+RespondingMessage <|-- Reject
+RespondingMessage <|-- Confirm
+}
+
+package termination{
+TerminationMessage <|-- ReducerIdle
+TerminationMessage <|-- ReducerActive
+TerminationMessage <|-- Kill
+
+}
+
+@enduml
+#+end_src
+
+#+results:
+[[file:02messages.png]]
+
+* Protocol
+
+** Acknowledgement protocol
+#+begin_src plantuml :file acknowledgementProtocol.png
+hide footbox
+skinparam monochrome true
+activate Timer
+activate Actor1
+activate Actor2
+Actor1 ->> Actor2:Message()
+Actor1 ->> Timer:Start
+loop no ackowledgement received
+  alt acknowledgement
+  Actor2 --> Actor1:MessageAcknowledgement()
+  Actor1 ->> Timer:Cancel()
+  else else timeout
+  Timer ->> Actor1:Timeout()
+  Actor1 ->> Actor2:Message()
+  Actor1 ->> Timer:Start
+  end
+end
+#+end_src
+
+#+results:
+[[file:acknowledgementProtocol.png]]
+
+** Startup protocol
+#+begin_src plantuml :file 03startupProtocol.png
+hide footbox
+skinparam monochrome true
+Mapper ->> Reducer:WorkOn
+note right Mapper: acknowledgement protocol
+activate Reducer
+activate Mapper
+Reducer -->> Mapper:WorkOnOk
+deactivate Reducer
+deactivate Mapper
+#+end_src
+
+#+results:
+[[file:03startupProtocol.png]]
+
+
+** Termination protocol
+#+begin_src plantuml :file 03bterminationProtocol.png
+hide footbox
+skinparam monochrome true
+activate Reducer
+activate Monitor
+note right of Reducer: Every couple of messages \n follows the acknowledgement protocol
+Reducer -> Monitor:ReducerIdle
+Monitor --> Reducer:ReducerIdleOk
+opt
+  loop
+  Reducer -> Monitor:ReducerActive()
+  Monitor --> Reducer:ReducerActiveOk()
+  Reducer -> Monitor:ReducerIdle()
+  Monitor --> Reducer:ReducerIdleOk()
+  end
+end
+Monitor -> Reducer:Kill()
+note left Reducer: the reducer kills its worker,\n broker and manager
+Reducer --> Monitor:KillOk()
+deactivate Reducer
+deactivate Monitor
+
+#+end_src
+
+#+results:
+[[file:03bterminationProtocol.png]]
+
+
+
+** Request protocol
+#+begin_src plantuml :file 04requestProtocol.png
+skinparam shadowing false
+skinparam monochrome true
+hide footbox
+box "Performing Protocol" #White
+[o->> Manager
+activate Manager
+Manager ->> Worker:Perform(task)
+activate Worker
+Worker ->> Manager:WorkerDone
+deactivate Manager
+deactivate Worker
+end box
+#+end_src
+
+#+results:
+[[file:04requestProtocol.png]]
+
+** Query protocol
+#+begin_src plantuml :file 05queryProtocol.png
+hide footbox
+skinparam monochrome true
+skinparam shadowing false
+box "Performing Protocol" #White
+[o->> Broker
+activate Broker
+Broker ->> Manager: QueryContribution
+activate Manager
+opt
+Manager ->> Worker:QueryRemainingWork
+activate Worker
+Worker ->> Manager:Remaining(value)
+deactivate Worker
+end
+Manager ->> Broker: Inform(value)
+deactivate Manager
+deactivate Broker
+end box
+#+end_src
+
+#+results:
+[[file:05queryProtocol.png]]
+
+** Submission protocol
+#+begin_src plantuml :file 06submissionProtocol.png
+hide footbox
+skinparam monochrome true
+skinparam shadowing false
+skinparam ParticipantPadding 120
+box "Submission Protocol" #White
+[o->> Manager
+activate Manager
+note right Manager : the manager asks to negotiate a task
+Manager ->> Broker: Submit(task,contribution)
+note right Broker:the broker is not involved in a negotiation (not brokerBusy) 
+activate Broker
+alt the broker did not find a contractor before the timeout
+Broker ->> Manager: BrokerDeny
+else All the acquaintances have answered negatively
+Broker ->> Manager: CFPDeclinedByAll
+else the broker find a contractor
+Broker ->> Manager: BrokerReady
+alt the task is already performed by the worker
+Manager ->> Broker: Cancel
+else the task is still in the task bundle
+Manager ->> Broker: Approve
+Broker ->> Manager : BrokerFinish
+end
+end
+deactivate Manager
+deactivate Broker
+end box
+#+end_src
+
+#+results:
+[[file:06submissionProtocol.png]]
+
+
+
+** Negotiation Protocol
+
+#+begin_src plantuml :file 07negotiationProtocol.png
+hide footbox
+skinparam monochrome true
+skinparam shadowing false
+box "Negotiation Protocol" #White
+participant "Initiator:Broker" as Initiator
+participant "Participant:Broker" as Participant
+participant "Participant:Manager" as Manager
+group deadline
+[o->> Initiator
+activate Initiator
+Initiator ->> Participant: Cfp(taskCost,initiatorContribution)
+activate Participant
+Participant ->> Manager: InformContribution(initiator, initiatorContribution)
+activate Manager
+alt the participant satisfies the acceptability criteria (aC) and is not already involved in another negotiation
+Participant ->> Initiator: Propose(participantContribution)
+note right
+aC ↔
+(participantContribution+taskCost<
+initiatorContribution)
+end note
+else the participant does not satisfy the acceptability criteria (not aC)
+Participant ->> Initiator: Decline
+opt if the broker is not involved in another negotiation
+Participant ->> Manager: BrokerNotBusy
+end
+end
+alt the negotiation is cancelled
+Initiator ->> Participant: Reject
+Participant ->> Manager: BrokerNotBusy
+else one participant is selected,  the others are rejected
+alt
+note right Initiator
+selected=argmin(participantContributions)
+end note
+Initiator ->> Participant: Accept(task)
+Participant ->> Manager: Request(task)
+deactivate Manager
+Participant -->> Initiator: Confirm
+note right Participant : Accept/Confirm follows the acknowledgement protocol
+else
+Initiator ->> Participant: Reject
+Participant ->> Manager: BrokerNotBusy
+end
+deactivate Participant
+deactivate Initiator
+end
+end box
+#+end_src
+
+#+results:
+[[file:07negotiationProtocol.png]]
+
+** performing final reduce task protocol, in case of task split
+#+begin_src plantuml :file taskSplitFinalReduceProtocol.png
+hide footbox
+skinparam monochrome true
+skinparam shadowing false
+box "Performing Final Reduce Task Protocol" #White
+activate IntermediateReducer
+activate FinalReducerIRManager
+loop
+IntermediateReducer ->> FinalReducerIRManager: GetIrResult(ir)
+note right IntermediateReducer: FinalReducerIRManager collects \n the intermediate results from the \n (different) intermediate reducers \n until all the results are received
+end
+FinalReducerIRManager ->> FinalReducerManager:Request(t)
+note right FinalReducerIRManager: t is the task built from the intermediate results
+activate FinalReducerManager
+activate FinalReducerWorker
+FinalReducerManager ->> FinalReducerWorker:Perform(t)
+deactivate FinalReducerWorker
+deactivate FinalReducerManager
+deactivate FinalReducerIRManager
+deactivate IntermediateReducer
+end box
+#+end_src
+
+#+results:
+[[file:taskSplitFinalReduceProtocol.png]]
+
+* Behaviours
+
+How to manage several auction ?
+1. An agent do not bid to several auction
+2. A bidder does not initiate an auction
+
+** broker behaviours
+
+*** Participant behaviour, considering mono auction
+
+#+BEGIN_SRC latex :imagemagick yes :border 1em :packages '(("" "tikz")) :exports results :file monoAuctionBidderBehaviour.pdf
+\usetikzlibrary{automata,arrows}
+\begin{tikzpicture}[>=triangle 45]
+\node (Broker) at (0,3) [state,initial]  {Broker};
+\node (Enquirer) at (20,5) [state] {Enquirer};
+\node (Bidder) at (20,-2)  [state] {Bidder};
+\node (Killed) at (10,-5) [state,accepting] {Killed};
+
+\path[->]
+(Enquirer) edge [loop above] node {manager:Submit(\_,\_) $\Rightarrow$ manager!BrokerAbort} ()
+           edge [loop right] node {oldBidder:Decline() $\Rightarrow$ ()} ()
+           edge [near start, right , out=45, in = -45, looseness=10] node {oldBidder:Propose(\_) $\Rightarrow$ oldBidder!Reject()} (Enquirer)
+           edge [above,slope, out=130, in=50, looseness=20] node {otherInitiator:Cfp(tC,iC) $\Rightarrow$  manager!InformContribution(otherInitiator,iC) and (if not aC then otherInitiator!Decline() else storeCfp(otherInitiator,tC,iC)) } (Enquirer)
+           edge [above,slope, out=120, in=60, looseness=15] node {oldInitiator:Accept(t) $\Rightarrow$ oldInitiator!Confirm()} (Enquirer)
+           edge [out=155,in=25, sloped, above] node {manager:Inform(pC) and not aC \n$\Rightarrow$ initiator!Decline() and manager!BrokerNotBusy()} (Broker)
+           edge [right] node {manager:Inform(pC) and aC \n=>\n initiator!Propose(pC) and start timer} (Bidder)
+(Broker) edge [sloped,above] node {initiator:Cfp(tC,iC) $\Rightarrow$\n manager!QueryContribution() and manager!InformContribution(initiator,iC) } (Enquirer)
+         edge [loop above] node {oldBidder:Propose(\_) $\Rightarrow$ oldBidder!Reject()} ()
+         edge [loop below] node {oldBidder:Decline() $\Rightarrow$ ()} ()
+         edge [below,slope, out=-120, in=-60, looseness=15] node {someInitiator:Accept(t) $\Rightarrow$ someInitiator!Confirm()} (Broker)
+         edge [sloped, above] node {monitor:Kill() $\Rightarrow$ monitor!BrokerKillOK()} (Killed)
+(Bidder) edge [loop below] node {oldBidder:Propose(\_) $\Rightarrow$ oldBidder!Reject()} ()
+         edge [loop right] node {oldBidder:Decline() $\Rightarrow$ ()} ()
+         edge [near start , right , out=45, in=-45, looseness=10 ] node {currentTime >= deadline $\Rightarrow$ initiator!Propose(pC) and start timer} (Bidder)
+         edge [below,slope, out=-130, in=-50, looseness=20] node {otherInitiator:Cfp(tC,iC) $\Rightarrow$ manager!InformContribution(otherInitiator,iC) and (if not aC then otherInitiator!Decline() else storeCfp(otherInitiator,tC,iC)) } (Bidder)
+         edge [sloped,above] node {initiator:Reject() $\Rightarrow$ manager!BrokerNotBusy()} (Broker)
+         edge [out=180,in=-20, sloped,below] node {initiator:Accept(task) $\Rightarrow$ manager!Request(task) and initiator!Confirm()} (Broker)
+         edge [below,slope, out=-120, in=-60, looseness=15] node {oldInitiator:Accept(t) $\Rightarrow$ oldInitiator!Confirm()} (Bidder)
+;
+
+\node at (10,-9){tC = taskCost, iC = initiatorContribution, pC = participantContribution, aC (acceptability Criteria)= {pC+tC<iC}};
+\end{tikzpicture}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_LaTeX
+[[file:monoAuctionBidderBehaviour.pdf]]
+#+END_LaTeX
+
+[[file:monoAuctionBidderBehaviour.pdf]]
+
+*** Participant behaviour, considering multi auctions
+
+#+BEGIN_SRC latex :imagemagick yes :border 1em :packages '(("" "tikz")) :exports results :file multiAuctionsBidderBehaviour.pdf
+\usetikzlibrary{automata,arrows}
+
+\begin{tikzpicture}[>=triangle 45]
+\node (Broker) at (0,-2) [state,initial]  {Broker};
+\node (CFPMapsManager) at (15,7) [state] {CFPMapsManager};
+\node (Bidder) at (25,-2)  [state] {Bidder};
+
+\path[->]
+(Broker) edge [sloped,above] node  {initiator:Cfp(tC,iC) $\Rightarrow$ storeCfp(tC,iC) and manager!QueryContribution() and manager!InformContribution(initiator,iC) } (Bidder)
+(Bidder) edge [sloped,above, out=120, in=-25] node {manager:Inform(pC) $\Rightarrow$ realContrib=pc and assessStoredCfp() } (CFPMapsManager)
+(Bidder) edge [below, slope, out=-130, in=-60, looseness=15] node {initiator:Cfp(tC,iC) and not realContrib.isDefined() $\Rightarrow$ storeCfp(tC,iC) and manager!InformContribution(initiator,ic)} (Bidder)
+(Bidder) edge [below, slope, out=-120, in=-70, looseness=12] node {initiator:Cfp(tC,iC) and realContrib.isDefined() $\Rightarrow$ assessCfp(tC,iC)) and manager!InformContribution(initiator,ic) } (Bidder)
+(Bidder) edge [loop right] node[align=center] {initiator:Accept(task) and (not storedCfp.isEmpty() or not currentCfp.isEmpty()) $\Rightarrow$ \\ updateCFPMapsAndContrib() and initiator!Confirm() and manager!Request(task) and manager!QueryContribution()} ()
+(Bidder) edge [sloped, below, out=-170, in=-10] node[align=center] {initiator:Accept(task) and storedCfp.isEmpty() and currentCfp.isEmpty() $\Rightarrow$ \\ updateCFPMapsAndContrib() and initiator!Confirm() and manager!RequestAndNotBusy(task)} (Broker)
+(Bidder) edge [right, slope, out=40, in=90, looseness=10] node[align=center] {initiator:Reject(task) and not storedCfp.isEmpty() or not currentCfp.isEmpty() $\Rightarrow$ \\ updateCFPMapsAndContrib() and manager!QueryContribution()} (Bidder)
+(Bidder) edge [above, slope, out=170, in=10] node[align=center] {initiator:Reject(task) and storedCfp.isEmpty() and currentCfp.isEmpty() $\Rightarrow$ \\ updateCFPMapsAndContrib() and manager!BrokerNotBusy()} (Broker)
+(CFPMapsManager) edge [sloped,below] node {not storedCfp.isEmpty() or not currentCfp.isEmpty()} (Bidder)
+(CFPMapsManager) edge [sloped,above] node{storedCfp.isEmpty() and currentCfp.isEmpty() $\Rightarrow$ manager!BrokerNotBusy} (Broker)
+;
+
+\node at (10,-8){assessCfp() : send Propose, Decline, or put the Cfp in the Map, depending on contributions};
+\node at (10,-9){assessStoredCfp() : for each stored Cfp, send Propose, Decline, or keep the Cfp in the Map, depending on contributions};
+\end{tikzpicture}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_LaTeX
+[[file:multiAuctionsBidderBehaviour.pdf]]
+#+END_LaTeX
+
+[[file:multiAuctionsBidderBehaviour.pdf]]
+
+
+*** Initiator behaviour
+
+#+BEGIN_SRC latex :imagemagick yes :border 1em :packages '(("" "tikz")) :exports results :file initiatorBehaviour.pdf
+\usetikzlibrary{automata,arrows}
+\begin{tikzpicture}[>=triangle 45]
+\node (Broker) at (0,5) [state,initial]  {Broker};
+\node (Initiator) at (20,10) [state] {Initiator};
+\node (Awarder) at (40,5)  [state] {Awarder};
+\node (Contractor) at (20,0) [state] {Contractor};
+\node (Bidder) at (35,-4) [state] {Bidder};
+
+\path[->]
+(Broker) edge [below, sloped] node {manager:Submit(task,iC) $\Rightarrow$ acquaintances!Cfp(tC,iC) and initProposals()} (Initiator)
+(Initiator) edge [right , out=15, in = -5, looseness=7] node {part:Decline(pC) and nbReply < nbAcq and not timeOut $\Rightarrow$ nbReply++ and manager!InformContribution(part,pC)} (Initiator)
+      edge [near start, right , out=40, in = -40, looseness=10] node {otherInitiator:Cfp(tC,iC) $\Rightarrow$ if not aC then otherInitiator!Decline() else storeCfp(otherInitiator,tC,iC)} (Initiator)
+      edge [below , out=-45, in=-130, looseness=10] node {part:Propose(pC) and nbReply < nbAcq and not timeOut $\Rightarrow$ addToProposals(part,pC) and nbReply++} (Initiator)
+      edge [above, out = 182, in=30, sloped] node {part:Decline(pC) and nbProp = 0 and timeOut $\Rightarrow$ manager!InformContribution(part,pC) and manager!BrokerDeny()} (Broker)
+      edge [above, out = 170, in= 45, sloped] node {part:Decline(pC) and nbReply+1 = nbAcq and nbProp = 0 $\Rightarrow$ manager!InformContribution(part,pC) and manager!CFPDeclinedByAll()} (Broker)
+      edge [above, sloped] node {((part:Propose(pC) and nbReply = nbAcq) or timeOut) and nbProp $\geq$ 1 } (Awarder)
+      edge [below, sloped] node { $\Rightarrow$ selectProposal() and manager!BrokerReady(task) and filterNot(selected)!Reject()} (Awarder)
+(Awarder) edge [above, sloped] node {manager:Cancel() and storedCfp.isEmpty $\Rightarrow$ selected!Reject()} (Broker)
+     edge [right] node[align=center] {manager:Cancel() and not storedCfp.isEmpty $\Rightarrow$ \\ selected!Reject() and manager!QueryContribution()} (Bidder)
+     edge [above, sloped] node {manager:Approve() $\Rightarrow$ selected!Accept(task) and start timer} (Contractor)
+     edge [loop right] node[align=center] {otherInitiator:Cfp(tC,iC) $\Rightarrow$ manager!InformContribution(otherInitiator,iC) and \\ (if not aC then otherInitiator!Decline() else storeCfp(otherInitiator,tC,iC))} (Awarder)
+(Contractor) edge [above, sloped] node {selected:Confirm() and storedCfp.isEmpty() $\Rightarrow$ manager!BrokerFinish()} (Broker)
+    edge [above, sloped] node {selected:Confirm() and not storedCfp.isEmpty() $\Rightarrow$ manager!QueryContribution()} (Bidder)
+    edge [loop below] node[align=center] {otherInitiator:Cfp(tC,iC) $\Rightarrow$ \\ if not aC then otherInitiator!Decline() else storeCfp(otherInitiator,tC,iC)} ()
+    edge [below , out=-45, in=-130, looseness=10]  node {timeOut $\Rightarrow$ selected!Accept(task) and start timer} (Contractor)
+;
+
+\node at (10,-5.5){part represents a participant};
+\node at (10,-6){iC is the initiator contribution, tC is the task cost};
+\node at (10,-6.5){initProposals() means : nbReply = 0 and proposals = new Map[ActorRef,Contribution]};
+\node at (10,-7) {acquaintances is the set of reducers known by the agent, nbAcq is the number of acquaintances};
+\node at (10,-7.5) {selectProposal() means : selected becomes the selected bidder ; filterNot(selected) represents the set of keys in proposals which are not selected. };
+\node at (10,-8) {nbProp is the number of received proposals};
+\end{tikzpicture}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_LaTeX
+[[file:initiatorBehaviour.pdf]]
+#+END_LaTeX
+[[file:initiatorBehaviour.pdf]]
+
+
+** Worker behaviour
+
+*** WorkerBehaviour considering foreman is "transparent"
+
+#+BEGIN_SRC latex :imagemagick yes :border 1em :packages '(("" "tikz")) :exports results :file workerBehaviour.pdf
+\usetikzlibrary{automata, arrows}
+\begin{tikzpicture}[>=triangle 45]
+\node (Free) at (0,5) [state,initial]  {Free};
+\node (Killed) at (8,0) [state,accepting] {Killed};
+\node (Busy) at (15,5) [state] {Busy};
+
+\path[->]
+(Free) edge [loop above] node {manager:QueryRemainingWork() \\ $\Rightarrow$ manager!Remaining(0)} ()
+         edge [above, sloped, out = 20, in = 160] node {manager:Perform(task) $\Rightarrow$ perform(task) } (Busy)
+         edge [below, sloped] node {reducer:Kill() $\Rightarrow$ reducer!WorkerKillOK()} (Killed)
+(Busy) edge [above, sloped] node {taskIsFinished $\Rightarrow$ manager!WorkerDone()} (Free)
+(Busy) edge [below, sloped] node {and (if isIRTask(t) then finalPerformer!GetIrResult(irResult(t)))} (Free)
+  edge [loop below] node {manager:QueryRemainingWork() \\ $\Rightarrow$ manager!Remaining(cost)} ()
+;
+\end{tikzpicture}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_LaTeX
+[[file:workerBehaviour.pdf]]
+#+END_LaTeX
+
+*** Worker behaviour with the foreman which manages files
+
+#+BEGIN_SRC latex :imagemagick yes :border 1em :packages '(("" "tikz")) :exports results :file workerBehaviourWithForeman.pdf
+\usetikzlibrary{automata, arrows}
+\begin{tikzpicture}[>=triangle 45]
+\node (Free) at (-1,5) [state,initial]  {Free};
+\node (Killed) at (8,0) [state,accepting] {Killed};
+\node (WaitingFiles) at (4,10) [state,accepting] {WaitingFiles};
+\node (Launching) at (11,10) [state,accepting] {Launching};
+\node (Busy) at (16,5) [state] {Busy};
+
+\path[->]
+(Free) edge [below , out=-45, in=-130, looseness=10] node[align=center] {foreman:GetRemainingWork() \\ $\Rightarrow$ foreman!Remaining(0)} (Free)
+         edge [above, sloped] node {foreman:Perform(task) $\Rightarrow$ () } (WaitingFiles)
+         edge [above, sloped] node {reducer:Kill() $\Rightarrow$ reducer!WorkerKillOK()} (Killed)
+(WaitingFiles) edge [loop above] node[align=center] {foreman:GetRemainingWork \\ $\Rightarrow$ Remaining(remainingCost)} ()
+       edge [above, sloped] node {rfh:AvailableDataFor(task)} (Launching)
+(Launching) edge [loop above] node[align=center] {foreman:GetRemainingWork \\ $\Rightarrow$ Remaining(remainingCost)} ()
+       edge [above, sloped] node {self:Perform(task) $\Rightarrow$ perform(task)} (Busy)
+(Busy) edge [above, sloped] node {taskIsFinished $\Rightarrow$ foreman!WorkerDone()} (Free)
+(Busy) edge [below, sloped] node {and (if isIRTask(t) then finalPerformer!GetIrResult(irResult(t)))} (Free)
+  edge [loop below] node[align=center] {foreman:GetRemainingWork() \\ $\Rightarrow$ foreman!Remaining(remainingCost)} ()
+;
+\end{tikzpicture}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_LaTeX
+[[file:workerBehaviourWithForeman.pdf]]
+#+END_LaTeX
+
+file:workerBehaviourWithForeman.pdf
+
+** Manager behaviours by message type
+
+*** Manager Behaviour after submit
+Manager : it has submitted a task and treats messages from the broker (BrokerReady, BrokerDeny, CFPDeclinedByAll or, at the end of delegation, BrokerFinish)
+
+#+BEGIN_SRC latex :imagemagick yes :border 1em :packages '(("""tikz")) :exports results :file managerAfterSubmitBehaviour.pdf
+\usetikzlibrary{automata, arrows}
+\begin{tikzpicture}[>=triangle 45]
+\node (Active) at (0,0) [state]  {Active};
+\node (Idle) at (25,10) [state] {Idle};
+\node (Pause) at (25,-10) [state] {Pause};
+
+\path[->]
+
+(Active) edge [loop left] node {(broker:BrokerFinish() or broker:BrokerDeny()) and not tasks.empty and t=taskToDelegate() $\Rightarrow$ broker!Submit(t,selfContrib)} ()
+  edge [left, near start, in=-140, out=140, looseness=22] node[align=center] {broker:BrokerReady() and tasks.contains(negotiatedTask) $\Rightarrow$ updateTaskBundle() and broker!Approve() } (Active)
+  edge [left, near start, in=-130, out=130, looseness=24] node[align=center] {broker:BrokerReady() and not tasks.contains(negotiatedTask) and ((not tasks.empty and t=taskToDelegate()) or (tasks.empty and workerBusy)) \\  $\Rightarrow$ broker!Cancel() and broker!Submit(t,selfContrib) } (Active)
+  edge [left, near end, in=-150, out=150, looseness=10] node {(broker:BrokerFinish() or broker:BrokerDeny()) and tasks.empty and workerBusy $\Rightarrow$ brokerBusy=false } (Active)
+  edge [left, near start, in=-145, out=145, looseness=15] node {broker:BrokerReady() and tasks.empty and workerBusy $\Rightarrow$ broker!Cancel() and brokerBusy=false } (Active)
+  
+  edge [below,sloped, out=-45, in = -180] node {(broker:BrokerFinish() or broker:BrokerDeny()) and ((not tasks.empty and not taskToDelegate) or (tasks.empty and not splitKeys.empty and not workerBusy)) $\Rightarrow$ brokerBusy=false} (Pause)
+  edge [above, sloped] node {broker:BrokerReady() and ((not tasks.empty and not taskToDelegate()) or (tasks.empty and not splitKeys.empty and not workerBusy)) } (Pause)
+  edge [below, sloped] node {and not tasks.contains(negociatedTask) $\Rightarrow$ broker!Cancel() and brokerBusy=false} (Pause)
+  edge [below, sloped, out=-35, in=170] node {broker:CFPDeclinedByAll() and (not tasks.empty or not splitKeys.empty or workerBusy)$\Rightarrow$ brokerBusy=false } (Pause)
+
+  edge [above,sloped, out=45, in = 180] node {broker:BrokerReady() and tasks.empty and splitKeys.empty and not workerBusy $\Rightarrow$ broker!Cancel() and monitor!ReducerIdle() and start timer  and brokerBusy=false} (Idle)
+  edge [below,sloped] node {(BrokerFinish() or BrokerDeny()) and tasks.empty and splitKeys.empty and not workerBusy $\Rightarrow$ monitor!ReducerIdle() and start timer and brokerBusy=false} (Idle)
+  edge [above, sloped, out=35, in=-170] node {broker:CFPDeclinedByAll() and tasks.empty and splitKeys.empty and not workerBusy $\Rightarrow$ brokerBusy=false } (Idle)
+
+(Idle) edge [loop above] node {broker:BrokerReady() $\Rightarrow$ broker!Cancel() and brokerBusy=false} ()
+;
+\end{tikzpicture}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_LaTeX
+[[file:managerAfterSubmitBehaviour.pdf]]
+#+END_LaTeX
+[[file:managerAfterSubmitBehaviour.pdf]]
+
+*** Manager Behaviour after a negotiation
+Manager behaviour when the broker was involved in a negotiation - it receives BrokerNotBusy, Request(t) from its broker or IRManager,
+or RequestNotBusy(t) which means Request(t) AND BrokerNotBusy. 
+
+#+BEGIN_SRC latex :imagemagick yes :border 1em :packages '(("""tikz")) :exports results :file managerParticipantBehaviour.pdf
+\usetikzlibrary{automata, arrows}
+\begin{tikzpicture}[>=triangle 45]
+\node (Active) at (0,10) [state]  {Active};
+\node (Idle) at (20,15) [state] {Idle};
+\node (Pause) at (40,10) [state] {Pause};
+\node (RequestBusy) at (20,-5) [state] {RequestBusy};
+
+\path[->]
+
+(Active)
+  edge [loop left] node {broker:BrokerNotBusy() and not tasks.empty and t=taskToDelegate() $\Rightarrow$ broker!Submit(t,selfContrib)} (Active)
+  edge [left, near end, in=-150, out=150, looseness=10] node {broker:BrokerNotBusy and tasks.empty and workerBusy $\Rightarrow$ brokerBusy=false } (Active)
+  edge [loop above] node[align=center] {broker:RequestAndNotBusy(t1) and workerBusy and t2=taskToDelegate() \\ $\Rightarrow$ tasks.add(t1) and broker!Submit(t2,selfContrib)} (Active)
+ 
+  edge [below,sloped,out=-60,in=180] node {IRManager:Request(t) $\Rightarrow$ tasks.add(t) and splitKeys.remove(t.key) and home=active} (RequestBusy)
+  edge [below,sloped,out=-50, in=170] node {broker:Request(t) $\Rightarrow$ tasks.add(t) and home=active} (RequestBusy)
+
+  edge [above, sloped] node {broker:RequestAndNotBusy(t)) and not workerBusy $\Rightarrow$ tasks.add(t) and worker!Perform(nextTask) and updateTaskBundle() and workerBusy=true and brokerBusy=false} (Pause)
+  
+  edge [below,sloped, out=-5, in = -175] node {broker:RequestAndNotBusy(t) and workerBusy and not taskToDelegate $\Rightarrow$ tasks.add(t) and brokerBusy=false} (Pause)
+  edge [below,sloped, out=-10, in = -165] node {broker:BrokerNotBusy() and ((not tasks.empty and not taskToDelegate) or (tasks.empty and not splitKeys.empty and not workerBusy)) $\Rightarrow$ brokerBusy=false} (Pause)
+
+  edge [above,sloped] node {BrokerNotBusy() and tasks.empty and splitKeys.empty and not workerBusy } (Idle)
+  edge [below,sloped] node {$\Rightarrow$ monitor!ReducerIdle() and start timer and brokerBusy=false} (Idle)
+
+(Pause)
+
+   edge [below,sloped,out=-120,in=0] node {IRManager:Request(t) $\Rightarrow$ tasks.add(t) and splitKeys.remove(t.key) and home=pause} (RequestBusy)
+   edge [below,sloped,out=-130, in=10] node {broker:Request(t) $\Rightarrow$ tasks.add(t) and home=pause} (RequestBusy)
+   
+   edge [above,out=120, in=60, looseness=20] node[align=center] {RequestAndNotBusy(t) and workerBusy $\Rightarrow$ tasks.add(task) and brokerBusy=false} (Pause)
+   edge [above, out=110, in=70, looseness=13] node[align=center] {RequestAndNotBusy(t) and not workerBusy \\ $\Rightarrow$ worker!Perform(t) and brokerBusy=false and workerBusy=true } (Pause)
+   edge [loop above] node[align=center] {BrokerNotBusy() $\Rightarrow$ brokerBusy=false} (Pause)
+
+(RequestBusy) edge [above,sloped] node {home=active $\Rightarrow$ if not workerBusy then worker!Perform(nextTask) and updateTaskBundle() and workerBusy=true} (Active)
+  edge [above,sloped] node {home=pause $\Rightarrow$ if not workerBusy then worker!Perform(nextTask) and updateTaskBundle() and workerBusy=true} (Pause)
+
+(Idle) edge [loop above] node[align=center] {BrokerNotBusy() $\Rightarrow$ brokerBusy=false} ()
+  edge [above, sloped] node {RequestAndNotBusy(t) } (Pause)
+  edge [below, sloped] node {$\Rightarrow$ brokerBusy=false and workerBusy=false and Monitor!ReducerActive and start timer and worker!Perform(t)} (Pause)
+;
+
+\end{tikzpicture}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_LaTeX
+[[file:managerParticipantBehaviour.pdf]]
+#+END_LaTeX
+[[file:managerParticipantBehaviour.pdf]]
+
+*** Manager Behaviour with its worker
+Manager behaviour with its worker (it receives WorkerDone) or about contribution (it receives InformContribution or QueryContribution from its broker) 
+
+#+BEGIN_SRC latex :imagemagick yes :border 1em :packages '(("""tikz")) :exports results :file managerWorkerContribBehaviour.pdf
+\usetikzlibrary{automata, arrows}
+\begin{tikzpicture}[>=triangle 45]
+\node (Active) at (0,0) [state]  {Active};
+\node (Idle) at (25,10) [state] {Idle};
+\node (Pause) at (25,-10) [state] {Pause};
+
+\path[->]
+(Active) edge [left, near end, in=-140, out=140, looseness=20] node[align=center] {worker:WorkerDone() and not tasks.empty $\Rightarrow$ \\ worker!Perform(task) and updateTaskBundle() and workerBusy=true and acquaintances!InformContribution(totalContrib) } (Active)
+  edge [left, near end, out=-120, in=120, looseness=30] node {broker:QueryContribution() $\Rightarrow$ broker!Inform(selfContrib) and brokerBusy = true} (Active)
+  edge [left, near start, in=-130, out=130, looseness=25] node {broker:InformContribution(acq,c) $\Rightarrow$ contributionMap.update(acq,c)} (Active)
+  edge [above,sloped, out=32, in=-165] node {worker:WorkerDone() and splitKeys.empty and tasks.empty } (Idle)
+  edge [below,sloped, out=32, in=-165] node { $\Rightarrow$ monitor!ReducerIdle() and start timer and workerBusy=false} (Idle)
+  edge [below,sloped, out=-32, in=165] node {worker:WorkerDone() and not splitKeys.empty and tasks.empty $\Rightarrow$ workerBusy=false} (Pause)
+
+(Idle) edge [below,sloped] node {broker:QueryContribution() $\Rightarrow$ broker!Inform(0) and brokerBusy = true} (Active)
+  edge [loop above] node {broker:InformContribution(acq,c) $\Rightarrow$ contributionMap.update(acq,c)} ()
+
+(Pause) edge [above,sloped] node {broker:InformContribution(acq, c) and t=taskToDelegate() $\Rightarrow$ contributionMap.update(acq,c) and brokerBusy=true and broker!Submit(t,selfContrib)} (Active)
+   edge [below,sloped, out=-70, in = -110, looseness=15] node {broker:InformContribution(acq, c) and not taskToDelegate() $\Rightarrow$ contributionMap.update(acq,c)} (Pause)
+   edge [below,sloped, out=-60, in = -120, looseness = 20] node[align=center] {worker:WorkerDone() and not tasks.empty $\Rightarrow$ \\ worker!Perform(task) and updateTaskBundle() and acquaintances!InformContribution(self,contrib) and workerBusy = true} (Pause)
+   edge [loop below] node {broker:QueryContribution() $\Rightarrow$ broker!Inform(selfContrib) and brokerBusy=true} ()
+   edge  [above] node[align=center] {worker:WorkerDone() and tasks.empty and splitKeys.empty \\ $\Rightarrow$ acquaintances!InformContribution(self,0) and monitor!ReducerIdle() and start timer and workerBusy=false} (Idle)
+;
+
+\end{tikzpicture}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_LaTeX
+[[file:managerWorkerContribBehaviour.pdf]]
+#+END_LaTeX
+[[file:managerWorkerContribBehaviour.pdf]]
+
+*** Manager Behaviour with the Monitor
+Manager : it receives a message from the Monitor (Kill, ReducerIdleOK, ReducerActiveOK). 
+
+#+BEGIN_SRC latex :imagemagick yes :border 1em :packages '(("""tikz")) :exports results :file managerMonitorBehaviour.pdf
+\usetikzlibrary{automata, arrows}
+\begin{tikzpicture}[>=triangle 45]
+\node (start) at (0,5) [fill,circle] {};
+\node (Active) at (10,0) [state]  {Active};
+\node (Idle) at (10,10) [state] {Idle};
+\node (Killed) at (20,10) [state,accepting] {Killed};
+
+\path[->]
+(start) edge [below,sloped] node {not brokerBusy and not workerBusy and not tasks.empty} (Active)
+  edge [above,sloped] node {not brokerBusy and not workerBusy and tasks.empty} (Idle)
+
+(Active)  edge [above,sloped, out=140, in = 40, looseness=15] node {currentTime $\geq$ deadline $\Rightarrow$ monitor!ReducerActive() and start timer } (Active)
+  edge [above,sloped, out=130, in = 50, looseness=10] node {monitor:ReducerActiveOK() $\Rightarrow$ stop timer } (Active)
+
+(Idle)  edge [below, sloped] node {monitor:Kill() $\Rightarrow$ myReducer!ManagerKillOK()} (Killed)
+  edge [above,sloped, out=140, in = 40, looseness=15] node {currentTime $\geq$ deadline $\Rightarrow$ monitor!ReducerIdle() and start timer } (Idle)
+  edge [above,sloped, out=130, in = 50, looseness=10] node {monitor:ReducerIdleOK() $\Rightarrow$ stop timer } (Idle)
+  ;
+
+
+\end{tikzpicture}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_LaTeX
+[[file:managerMonitorBehaviour.pdf]]
+#+END_LaTeX
+[[file:managerMonitorBehaviour.pdf]]
+
+
+** Monitor behaviour
+
+#+BEGIN_SRC latex :imagemagick yes :border 1em :packages '(("" "tikz")) :exports results :file monitorBehaviour.pdf
+\usetikzlibrary{automata,arrows}
+\begin{tikzpicture}[>=triangle 45]
+\node (Active) at (0,10) [state]  {Active};
+\node (WaitKillConfirmation) at (20,10) [state] {WaitKillConfirmation} ;
+\node (WaitProperKill) at (0,0) [state] {WaitProperKill} ;
+\node (Killed) at (20,0) [state] {Killed};
+
+\path[->]
+(Active) edge [above,sloped, out=32, in=155] node {reducer:ReducerIdle() and nbActiveReducers=1 $\Rightarrow$ nbActiveReducers=0 and nbRTD = 0 and reducer!ReducerReadyToDie() and reducers!Kill()} (WaitKillConfirmation)
+  edge [loop above] node[align=center] {reducer:ReducerIdle() and nbActiveReducers>1 \\ $\Rightarrow$ nbActiveReducers-- and reducer!ReducerIdleOK()} ()
+  edge [loop left] node[align=center] {reducer:ReducerActive() \\ $\Rightarrow$ nbActiveReducers++ and reducer!ReducerActiveOK()} ()
+(WaitKillConfirmation) edge [below,sloped, out=-165, in=-20] node {reducer:ReducerActive() $\Rightarrow$ nbActiveReducers=1 and reducer!ReducerActiveOK() } (Active)
+   edge [below,sloped] node {reducer:ReducerReadyToDie(false) $\Rightarrow$ () } (Active)
+   edge [loop above] node[align=center] {reducer:ReducerReadyToDie(true) and nbRTD > nbReducers-1 $\Rightarrow$ nbRTD++} ()
+   edge [below,sloped] node {reducer:ReducerReadyToDie(true) and nbRTD=nbReducers-1 $\Rightarrow$ nbRTD++ and reducers!Kill()} (WaitProperKill)
+(WaitProperKill) edge [above,sloped] node {reducer:KillOK() and nbKilled = nbReducers-1 $\Rightarrow$ ()} (Killed)
+edge [loop above] node  {reducer:KillOK() and nbKilled < nbReducers-1 $\Rightarrow$ nbKilled++ } ()
+;
+\end{tikzpicture}
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_LaTeX
+[[file:monitorBehaviour.pdf]]
+#+END_LaTeX
+[[file:monitorBehaviour.pdf]]

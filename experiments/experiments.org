@@ -1,0 +1,77 @@
+#+TITLE: Manipulations pour expériences
+#+AUTHOR: Quentin Baert
+
+Dans ce qui suit :
+
+- <id> est l'id de l'utilisateur sur la machine distante (e.g. morge)
+
+- <ip> est le chemin vers un fichier texte qui contient les adresses IP des
+  machines distantes (une adresse par ligne) (e.g. deployment/a13IP.txt)
+
+- <exp> est le chemin vers le dossier qui contiendra tous les résultats des
+  différentes expériences.
+
+- <actorsystem> nom des actor systems distant (e.g. TestRemote)
+
+- <port> est le port sur lequel les machines distantes écoutent pour recevoir
+  les messages.
+
+
+--
+
+
+1. Créer le jar du daemon
+
+   sbt daemon:assembly
+
+2. Déployer le jar sur les machines distantes
+
+   deployment/deploy.sh <id> <ip> target/scala-2.11/daemon.jar
+
+3. Vérifier que les mappers et reducers sont bien répartis dans les fichiers
+   config/remoteMappers.txt et config/remoteReducers.txt (/!\ utiliser
+   <actorsystem> et <port> /!\)
+
+4. Vérifier que l'adresse IP du monitor est correcte dans le fichier
+   src/main/resources/application.conf
+
+5. Lancer les daemons
+
+   deployment/launch.sh <id> <ip> /tmp/mas4data/mapreduce <actorsystem> <port>
+
+6. Ajouter un fichier config.txt dans <exp>
+
+   Pour rappel ce fichier peu être un "méta" fichier de config. Par exemple, la
+   ligne "* task-split: [true; false]" veut dire que l'on souhaite lancer des
+   expériences pour les deux configuration "task-split: true" et "task-split:
+   false". Si plusieurs lignes commencent par une étoile, les différentes
+   configurations sont créees grâce aux produits cartésiens des différents
+   paramètres concernés.
+
+7. Lancer une console sbt
+
+   sbt console
+
+8. Lancer la suite d'expérience (pour <n> run par configuration)
+
+   > import utils.experiments.ExperimentsBuilder
+   > val eb = new ExperimentsBuilder(<n>, "<exp>", "config/configLocation.txt", "<exp>/config.txt")
+   > eb.runAdaptive
+
+   La suite d'expériences est lancée. Chaque configuration issue du meta fichier
+   de config sera lancée <n> fois. Chaque dossier results se trouvera dans le
+   dossier <exp> avec son propre fichier de configuration.
+
+9. Les scripts suivants peuvent être utils :
+
+   - deployment/killdaemon.sh <id> <ip> : tue les daemons sur les machines
+     distantes
+
+   - deployment/clean.sh <id> <ip> /tmp/mas4data/mapreduce /tmp/mas4data :
+     nettoie les répertoires créés pour les expériences sur les machines
+     distantes. (/!\ Après cette opération, les jar ne se trouvent plus sur les
+     machines distantes. Ils font donc réutiliser le script deploy.sh pour
+     recréer l'architecture nécessaire.)
+
+10. Les métriques générales de chaque run se trouvent dans le fichier
+    <exp>/result_<nom-de-l'experience>/monitor.csv

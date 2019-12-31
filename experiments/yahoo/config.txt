@@ -1,0 +1,96 @@
+// Number
+<<<<<<< HEAD
+nb-mapper : 8
+nb-reducer : 8
+=======
+nb-mapper : 16
+nb-reducer : 16
+>>>>>>> mapper-rework3
+
+// Problem
+pb : yahooCountByKeyword
+
+// Strategies (k-eligible-big|k-eligible-small, kmax) | naive | ownership
+task-bundle-management-strategy : naive
+task-split : false
+threshold : 1
+// 1 = without negotiation
+bidder-max-auction : none
+// none = multi-auction
+partition-strategy : naive
+
+task-cost-strategy : (multiplier, 2)
+//(hardware, rd=10000, wd=0, nd=10000, hdl=1, nvps=125)
+inform-contribution-frequency : 1
+
+// Data and format
+init-source-type : file
+init-file : /home/centos/Data/Yahoo/allYahoo.csv
+init-chunks : true
+<<<<<<< HEAD
+init-chunks-path : /home/centos/Data/
+init-chunks-number : 8
+chunk-size : 50000
+
+// Result
+result-path : ./experiments/Yahoo/H1NoNego
+=======
+init-chunks-path : /home/centos/Data/Yahoo/
+init-chunks-number : 16
+chunk-size : 50000
+
+// Result
+result-path : /home/centos/results/
+>>>>>>> mapper-rework3
+
+// Timeouts for the Broker
+initiator-timeout : 300
+bidder-timeout : 600
+contractor-timeout : 300
+acknowledgment-timeout : 6000
+
+// Pause for the Worker
+pause-millis : 0
+pause-nanos : 0
+
+// Debug
+debug-reducer : false
+debug-manager : false
+debug-broker : false
+debug-worker : false
+debug-rfh : false
+<<<<<<< HEAD
+debug-monitor : true
+=======
+debug-monitor : false
+>>>>>>> mapper-rework3
+
+// Gnuplot
+gnuplot-max-taskdone-number : 80000
+gnuplot-output-filename : contributionClassique
+gnuplot-output-format : png
+gnuplot-title : classique contribution
+
+// Monitor0
+monitor-task-scale : 150000
+monitor-task-scale-step : 100
+task-monitor : false
+
+// Remote
+<<<<<<< HEAD
+remote : false
+=======
+remote : true
+>>>>>>> mapper-rework3
+remote-mappers : config/remoteMappersCluster.txt
+remote-reducers : config/remoteReducersCluster.txt
+
+// Duplicate chunks
+init-mapper-seed : 42
+<<<<<<< HEAD
+chunk-mult-proba : 0.01
+mult-chunks : 100 200
+=======
+chunk-mult-proba : 0.0
+mult-chunks : 10 20
+>>>>>>> mapper-rework3
