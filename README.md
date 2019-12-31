@@ -61,6 +61,8 @@ situated task allocation supports two additional crucial requirements
 concurrent, and (b) adaptation -- where task reallocation is triggered
 when a disruptive event is performed. 
 
+See the following instructions for the [deployement](deployement/README.md)
+
 ## References
 
 <a name="1">Dean, J. and Ghemawat, S. (2008)</a>, Mapreduce: simplified data
@@ -108,11 +110,11 @@ Please note that in the video:
 
 * Quentin BAERT, CRIStAL/Lille1
 
-* [Anne-Cécile CARON](http://www.lifl.fr/~caronc),  CRIStAL/Lille1
+* [Anne-Cécile CARON](http://www.lifl.fr/~caronc),  CRIStAL/ULille
 
-* [Maxime MORGE](http://www.lifl.fr/~morge), CRIStAL/Lille1
+* [Maxime MORGE](http://www.lifl.fr/~morge), CRIStAL/ULille
 
-* [Jean-Christophe ROUTIER](http://www.lifl.fr/~routier), CRIStAL/Lille1
+* [Jean-Christophe ROUTIER](http://www.lifl.fr/~routier), CRIStAL/ULille
 
 * [Kostas STATHIS](https://pure.royalholloway.ac.uk/portal/en/persons/kostas-stathis(7f422719-142b-409c-97a8-f3efd9113f6d).html), RHUL
 
