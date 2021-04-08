@@ -110,7 +110,7 @@ Please note that in the video:
 
 * Quentin BAERT, CRIStAL/Lille1
 
-* [Anne-Cécile CARON](http://www.lifl.fr/~caronc),  CRIStAL/ULille
+* [Anne-Cécile CARON](https://pro.univ-lille.fr/anne-cecile-caron/),  CRIStAL/ULille
 
 * [Maxime MORGE](http://www.lifl.fr/~morge), CRIStAL/ULille
 
@@ -120,6 +120,11 @@ Please note that in the video:
 
 ## Publications
 
+- *[An adaptive multi-agent system for task reallocation in a MapReduce job](https://hal.archives-ouvertes.fr/hal-03189190)*
+Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe
+Routier, Kostas Stathis. In Journal of Parallel and Distributed Computing (JPDC), 2021.
+
+_Abstract_: We study the problem of task reallocation for load-balancing of MapReduce jobs in applications that process large datasets. In this context, we propose a novel strategy based on cooperative agents used to optimise the task scheduling in a single MapReduce job. The novelty of our strategy lies in the ability of agents to identify opportunities within a current unbalanced allocation, which in turn trigger concurrent and one-to-many negotiations amongst agents to locally reallocate some of the tasks within a job. Our contribution is that tasks are reallocated according to the proximity of the resources and they are performed in accordance to the capabilities of the nodes in which agents are situated. To evaluate the adaptivity and responsiveness of our approach, we implement a prototype test-bed and conduct a vast panel of experiments in a heterogeneous environment and by exploring varying hardware configurations. This extensive experimentation reveals that our strategy significantly improves the overall runtime over the classical Hadoop data processing. 
 
 - *[A Location-Aware Strategy for Agents Negotiating Load-balancing](https://hal.archives-ouvertes.fr/hal-02344457)*
 Quentin Baert, Anne-Cécile Caron, Maxime Morge, Jean-Christophe
