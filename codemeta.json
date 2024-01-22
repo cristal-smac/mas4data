@@ -1,0 +1,95 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "@type": "SoftwareSourceCode",
+    "license": "https://spdx.org/licenses/GPL-3.0+",
+    "codeRepository": "https://github.com/cristal-smac/mas4data/",
+    "dateCreated": "2015-09-01",
+    "datePublished": "2016-04-03",
+    "dateModified": "2019-12-31",
+    "downloadUrl": "https://github.com/cristal-smac/mas4data/",
+    "name": "MAS4Data",
+    "version": "1.0",
+    "description": "MAS4Data: Multiagent systems for processing very large datasets",
+    "applicationCategory": "Data science",
+    "funding": "CNRS Challenge Mastodons",
+    "developmentStatus": "inactive",
+    "isPartOf": "https://github.com/cristal-smac",
+    "referencePublication": "https://doi.org/10.1016/j.jpdc.2021.03.008",
+    "funder": {
+        "@type": "Organization",
+        "name": "CNRS"
+    },
+    "keywords": [
+        "Artificial Intelligence",
+        "Multi-agent systems",
+        "Negotiation",
+        "MapReduce",
+        "BigData"
+    ],
+    "programmingLanguage": [
+        "Scala"
+    ],
+    "runtimePlatform": [
+        "JVM"
+    ],
+    "softwareRequirements": [
+        "Scala 2.12.4"
+    ],
+    "author": [
+        {
+            "@type": "Person",
+            "givenName": "Quentin",
+            "familyName": "Baert",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Univ. Lille, CNRS, Centrale Lille, UMR 9189 - CRIStAL, F-59000 Lille, France"
+            }
+        },
+        {
+            "@type": "Person",
+            "@id": "https://pro.univ-lille.fr/anne-cecile-caron",
+            "givenName": "Anne-Cécile",
+            "familyName": "Caron",
+            "email": "anne-cecile.caron@univ-lille.fr",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Univ. Lille, CNRS, Centrale Lille, UMR 9189 - CRIStAL, F-59000 Lille, France"
+            }
+        },
+        {
+            "@type": "Person",
+            "@id": "https://pro.univ-lille.fr/maxime-morge",
+            "givenName": "Maxime",
+            "familyName": "Morge",
+            "email": "maxime.morge@univ-lille.fr",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Univ. Lille, CNRS, Centrale Lille, UMR 9189 - CRIStAL, F-59000 Lille, France"
+            }
+        }
+    ],
+    "contributor": [
+        {
+            "@type": "Person",
+            "@id": "https://pro.univ-lille.fr/jean-christophe-routier",
+            "givenName": "Jean-Christophe",
+            "familyName": "Routier",
+            "email": "jean-christophe.routier@univ-lille.fr",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Univ. Lille, CNRS, Centrale Lille, UMR 9189 - CRIStAL, F-59000 Lille, France"
+            }
+        },
+        {
+            "@type": "Person",
+            "@id": "https://orcid.org/0000-0002-9946-4037",
+            "givenName": "Kostas",
+            "familyName": "Stathis",
+            "email": "Kostas.Stathis@rhul.ac.uk",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Department of Computer Science, Royal Holloway, University of London, Egham TW20 0EX, UK"
+            }
+        }
+    ]
+}
