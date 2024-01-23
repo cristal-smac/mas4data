@@ -106,18 +106,6 @@ Please note that in the video:
   to be see properly. Thus, the unfairness of the tasks allocation is
   a graphical effect.
 
-## People
-
-* Quentin BAERT, CRIStAL/Lille1
-
-* [Anne-Cécile CARON](https://pro.univ-lille.fr/anne-cecile-caron/),  CRIStAL/ULille
-
-* [Maxime MORGE](http://www.lifl.fr/~morge), CRIStAL/ULille
-
-* [Jean-Christophe ROUTIER](https://pro.univ-lille.fr/jean-christophe-routier/), CRIStAL/ULille
-
-* [Kostas STATHIS](https://pure.royalholloway.ac.uk/portal/en/persons/kostas-stathis(7f422719-142b-409c-97a8-f3efd9113f6d).html), RHUL
-
 ## Publications
 
 - *[An adaptive multi-agent system for task reallocation in a MapReduce job](https://hal.archives-ouvertes.fr/hal-03189190)*
